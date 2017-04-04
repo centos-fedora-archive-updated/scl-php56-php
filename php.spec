@@ -875,7 +875,6 @@ support for using the enchant library to PHP.
 
 %patch1 -p1 -b .fb_config
 %if 0%{?fedora} >= 26
-sed -e 's/\r//' -i ext/openssl/tests/bug66501.phpt
 %patch2 -p1 -b .openssl11
 %endif
 %patch5 -p1 -b .includedir
