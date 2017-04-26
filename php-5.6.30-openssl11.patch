@@ -1187,3 +1187,29 @@ index 828be8f..06e4e55 100644
 -- 
 2.9.3
 
+From 96201be7ef2732231c0e0103bf588eb0ee12b653 Mon Sep 17 00:00:00 2001
+From: Remi Collet <remi@remirepo.net>
+Date: Wed, 26 Apr 2017 16:27:32 +0200
+Subject: [PATCH] Cherry-pick 6822af2e738698aab9fa34ca0c572309960bcd74
+
+---
+ ext/openssl/openssl.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/ext/openssl/openssl.c b/ext/openssl/openssl.c
+index 8bafa98..191d570 100644
+--- a/ext/openssl/openssl.c
++++ b/ext/openssl/openssl.c
+@@ -827,7 +827,8 @@ static int add_oid_section(struct php_x509_request * req TSRMLS_DC) /* {{{ */
+ 	}
+ 	for (i = 0; i < sk_CONF_VALUE_num(sktmp); i++) {
+ 		cnf = sk_CONF_VALUE_value(sktmp, i);
+-		if (OBJ_create(cnf->value, cnf->name, cnf->name) == NID_undef) {
++		if (OBJ_sn2nid(cnf->name) == NID_undef && OBJ_ln2nid(cnf->name) == NID_undef &&
++				OBJ_create(cnf->value, cnf->name, cnf->name) == NID_undef) {
+ 			php_error_docref(NULL TSRMLS_CC, E_WARNING, "problem creating object %s=%s", cnf->name, cnf->value);
+ 			return FAILURE;
+ 		}
+-- 
+2.9.3
+
