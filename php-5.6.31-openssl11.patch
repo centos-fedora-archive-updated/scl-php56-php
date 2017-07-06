@@ -1,10 +1,10 @@
-From 2ceccb05d345d6a4dcbd20619acc7d6b1dcad57d Mon Sep 17 00:00:00 2001
+From d0c386012affb194ea4600ff2b6dbe447ff1898e Mon Sep 17 00:00:00 2001
 From: Remi Collet <fedora@famillecollet.com>
 Date: Mon, 20 Mar 2017 11:45:54 +0100
 Subject: [PATCH] backport needed changes for OpenSSL 1.1
 
 ---
- ext/openssl/openssl.c                             | 523 +++++++++++++++-------
+ ext/openssl/openssl.c                             | 528 ++++++++++++++--------
  ext/openssl/tests/001.phpt                        |   7 +-
  ext/openssl/tests/bug41033.phpt                   |   4 +-
  ext/openssl/tests/bug66501.phpt                   |   2 +-
@@ -12,10 +12,10 @@ Subject: [PATCH] backport needed changes for OpenSSL 1.1
  ext/openssl/tests/sni_server.phpt                 |   2 +
  ext/openssl/xp_ssl.c                              |  15 -
  ext/phar/util.c                                   |  13 +-
- 8 files changed, 368 insertions(+), 204 deletions(-)
+ 8 files changed, 371 insertions(+), 206 deletions(-)
 
 diff --git a/ext/openssl/openssl.c b/ext/openssl/openssl.c
-index f8641c6..8bafa98 100644
+index a78a8fb..fc9a708 100644
 --- a/ext/openssl/openssl.c
 +++ b/ext/openssl/openssl.c
 @@ -68,7 +68,9 @@
@@ -28,7 +28,17 @@ index f8641c6..8bafa98 100644
  #if OPENSSL_VERSION_NUMBER >= 0x0090708fL
  #define OPENSSL_ALGO_SHA224 6
  #define OPENSSL_ALGO_SHA256 7
-@@ -1053,9 +1055,11 @@ static EVP_MD * php_openssl_get_evp_md_from_algo(long algo) { /* {{{ */
+@@ -825,7 +827,8 @@ static int add_oid_section(struct php_x509_request * req TSRMLS_DC) /* {{{ */
+ 	}
+ 	for (i = 0; i < sk_CONF_VALUE_num(sktmp); i++) {
+ 		cnf = sk_CONF_VALUE_value(sktmp, i);
+-		if (OBJ_create(cnf->value, cnf->name, cnf->name) == NID_undef) {
++		if (OBJ_sn2nid(cnf->name) == NID_undef && OBJ_ln2nid(cnf->name) == NID_undef &&
++				OBJ_create(cnf->value, cnf->name, cnf->name) == NID_undef) {
+ 			php_error_docref(NULL TSRMLS_CC, E_WARNING, "problem creating object %s=%s", cnf->name, cnf->value);
+ 			return FAILURE;
+ 		}
+@@ -1053,9 +1056,11 @@ static EVP_MD * php_openssl_get_evp_md_from_algo(long algo) { /* {{{ */
  			mdtype = (EVP_MD *) EVP_md2();
  			break;
  #endif
@@ -40,7 +50,7 @@ index f8641c6..8bafa98 100644
  #if OPENSSL_VERSION_NUMBER >= 0x0090708fL
  		case OPENSSL_ALGO_SHA224:
  			mdtype = (EVP_MD *) EVP_sha224();
-@@ -1173,7 +1177,9 @@ PHP_MINIT_FUNCTION(openssl)
+@@ -1173,7 +1178,9 @@ PHP_MINIT_FUNCTION(openssl)
  #ifdef HAVE_OPENSSL_MD2_H
  	REGISTER_LONG_CONSTANT("OPENSSL_ALGO_MD2", OPENSSL_ALGO_MD2, CONST_CS|CONST_PERSISTENT);
  #endif
@@ -50,7 +60,7 @@ index f8641c6..8bafa98 100644
  #if OPENSSL_VERSION_NUMBER >= 0x0090708fL
  	REGISTER_LONG_CONSTANT("OPENSSL_ALGO_SHA224", OPENSSL_ALGO_SHA224, CONST_CS|CONST_PERSISTENT);
  	REGISTER_LONG_CONSTANT("OPENSSL_ALGO_SHA256", OPENSSL_ALGO_SHA256, CONST_CS|CONST_PERSISTENT);
-@@ -1893,6 +1899,7 @@ static int openssl_x509v3_subjectAltName(BIO *bio, X509_EXTENSION *extension)
+@@ -1893,6 +1900,7 @@ static int openssl_x509v3_subjectAltName(BIO *bio, X509_EXTENSION *extension)
  {
  	GENERAL_NAMES *names;
  	const X509V3_EXT_METHOD *method = NULL;
@@ -58,7 +68,7 @@ index f8641c6..8bafa98 100644
  	long i, length, num;
  	const unsigned char *p;
  
-@@ -1901,8 +1908,9 @@ static int openssl_x509v3_subjectAltName(BIO *bio, X509_EXTENSION *extension)
+@@ -1901,8 +1909,9 @@ static int openssl_x509v3_subjectAltName(BIO *bio, X509_EXTENSION *extension)
  		return -1;
  	}
  
@@ -70,7 +80,7 @@ index f8641c6..8bafa98 100644
  	if (method->it) {
  		names = (GENERAL_NAMES*)(ASN1_item_d2i(NULL, &p, length,
  						       ASN1_ITEM_ptr(method->it)));
-@@ -1965,6 +1973,8 @@ PHP_FUNCTION(openssl_x509_parse)
+@@ -1965,6 +1974,8 @@ PHP_FUNCTION(openssl_x509_parse)
  	char * tmpstr;
  	zval * subitem;
  	X509_EXTENSION *extension;
@@ -79,7 +89,7 @@ index f8641c6..8bafa98 100644
  	char *extname;
  	BIO  *bio_out;
  	BUF_MEM *bio_buf;
-@@ -1979,12 +1989,14 @@ PHP_FUNCTION(openssl_x509_parse)
+@@ -1979,12 +1990,14 @@ PHP_FUNCTION(openssl_x509_parse)
  	}
  	array_init(return_value);
  
@@ -98,7 +108,7 @@ index f8641c6..8bafa98 100644
  	/* hash as used in CA directories to lookup cert by subject name */
  	{
  		char buf[32];
-@@ -2008,7 +2020,7 @@ PHP_FUNCTION(openssl_x509_parse)
+@@ -2008,7 +2021,7 @@ PHP_FUNCTION(openssl_x509_parse)
  		add_assoc_string(return_value, "alias", tmpstr, 1);
  	}
  
@@ -107,7 +117,7 @@ index f8641c6..8bafa98 100644
  	add_assoc_string(return_value, "signatureTypeSN", (char*)OBJ_nid2sn(sig_nid), 1);
  	add_assoc_string(return_value, "signatureTypeLN", (char*)OBJ_nid2ln(sig_nid), 1);
  	add_assoc_long(return_value, "signatureTypeNID", sig_nid);
-@@ -3482,14 +3494,21 @@ static int php_openssl_is_private_key(EVP_PKEY* pkey TSRMLS_DC)
+@@ -3482,14 +3495,21 @@ static int php_openssl_is_private_key(EVP_PKEY* pkey TSRMLS_DC)
  {
  	assert(pkey != NULL);
  
@@ -134,7 +144,7 @@ index f8641c6..8bafa98 100644
  			break;
  #endif
  #ifndef NO_DSA
-@@ -3498,29 +3517,50 @@ static int php_openssl_is_private_key(EVP_PKEY* pkey TSRMLS_DC)
+@@ -3498,29 +3518,50 @@ static int php_openssl_is_private_key(EVP_PKEY* pkey TSRMLS_DC)
  		case EVP_PKEY_DSA2:
  		case EVP_PKEY_DSA3:
  		case EVP_PKEY_DSA4:
@@ -200,7 +210,7 @@ index f8641c6..8bafa98 100644
  			break;
  #endif
  		default:
-@@ -3531,42 +3571,91 @@ static int php_openssl_is_private_key(EVP_PKEY* pkey TSRMLS_DC)
+@@ -3531,42 +3572,91 @@ static int php_openssl_is_private_key(EVP_PKEY* pkey TSRMLS_DC)
  }
  /* }}} */
  
@@ -306,7 +316,7 @@ index f8641c6..8bafa98 100644
  		return 0;
  	}
  	/* all good */
-@@ -3574,15 +3663,69 @@ zend_bool php_openssl_pkey_init_dsa(DSA *dsa)
+@@ -3574,15 +3664,69 @@ zend_bool php_openssl_pkey_init_dsa(DSA *dsa)
  }
  /* }}} */
  
@@ -380,7 +390,7 @@ index f8641c6..8bafa98 100644
  	PHP_OPENSSL_RAND_ADD_TIME();
  	if (!DH_generate_key(dh)) {
  		return 0;
-@@ -3614,18 +3757,8 @@ PHP_FUNCTION(openssl_pkey_new)
+@@ -3614,18 +3758,8 @@ PHP_FUNCTION(openssl_pkey_new)
  		    if (pkey) {
  				RSA *rsa = RSA_new();
  				if (rsa) {
@@ -401,7 +411,7 @@ index f8641c6..8bafa98 100644
  					}
  					RSA_free(rsa);
  				}
-@@ -3638,12 +3771,7 @@ PHP_FUNCTION(openssl_pkey_new)
+@@ -3638,12 +3772,7 @@ PHP_FUNCTION(openssl_pkey_new)
  		    if (pkey) {
  				DSA *dsa = DSA_new();
  				if (dsa) {
@@ -415,7 +425,7 @@ index f8641c6..8bafa98 100644
  						if (EVP_PKEY_assign_DSA(pkey, dsa)) {
  							RETURN_RESOURCE(zend_list_insert(pkey, le_key TSRMLS_CC));
  						}
-@@ -3659,11 +3787,7 @@ PHP_FUNCTION(openssl_pkey_new)
+@@ -3659,11 +3788,7 @@ PHP_FUNCTION(openssl_pkey_new)
  		    if (pkey) {
  				DH *dh = DH_new();
  				if (dh) {
@@ -428,7 +438,7 @@ index f8641c6..8bafa98 100644
  						if (EVP_PKEY_assign_DH(pkey, dh)) {
  							RETURN_RESOURCE(zend_list_insert(pkey, le_key TSRMLS_CC));
  						}
-@@ -3738,7 +3862,7 @@ PHP_FUNCTION(openssl_pkey_export_to_file)
+@@ -3738,7 +3863,7 @@ PHP_FUNCTION(openssl_pkey_export_to_file)
  			cipher = NULL;
  		}
  
@@ -437,7 +447,7 @@ index f8641c6..8bafa98 100644
  #ifdef HAVE_EVP_PKEY_EC
  			case EVP_PKEY_EC:
  				pem_write = PEM_write_bio_ECPrivateKey(bio_out, EVP_PKEY_get1_EC_KEY(key), cipher, (unsigned char *)passphrase, passphrase_len, NULL, NULL);
-@@ -3807,7 +3931,7 @@ PHP_FUNCTION(openssl_pkey_export)
+@@ -3807,7 +3932,7 @@ PHP_FUNCTION(openssl_pkey_export)
  			cipher = NULL;
  		}
  
@@ -446,7 +456,7 @@ index f8641c6..8bafa98 100644
  #ifdef HAVE_EVP_PKEY_EC
  			case EVP_PKEY_EC:
  				pem_write = PEM_write_bio_ECPrivateKey(bio_out, EVP_PKEY_get1_EC_KEY(key), cipher, (unsigned char *)passphrase, passphrase_len, NULL, NULL);
-@@ -3928,68 +4052,88 @@ PHP_FUNCTION(openssl_pkey_get_details)
+@@ -3928,68 +4053,88 @@ PHP_FUNCTION(openssl_pkey_get_details)
  	/*TODO: Use the real values once the openssl constants are used 
  	 * See the enum at the top of this file
  	 */
@@ -583,7 +593,7 @@ index f8641c6..8bafa98 100644
  				zval *ec;
  				const EC_GROUP *ec_group;
  				int nid;
-@@ -4546,13 +4690,13 @@ PHP_FUNCTION(openssl_private_encrypt)
+@@ -4546,13 +4691,13 @@ PHP_FUNCTION(openssl_private_encrypt)
  	cryptedlen = EVP_PKEY_size(pkey);
  	cryptedbuf = emalloc(cryptedlen + 1);
  
@@ -599,7 +609,7 @@ index f8641c6..8bafa98 100644
  						padding) == cryptedlen);
  			break;
  		default:
-@@ -4604,13 +4748,13 @@ PHP_FUNCTION(openssl_private_decrypt)
+@@ -4604,13 +4749,13 @@ PHP_FUNCTION(openssl_private_decrypt)
  	cryptedlen = EVP_PKEY_size(pkey);
  	crypttemp = emalloc(cryptedlen + 1);
  
@@ -615,7 +625,7 @@ index f8641c6..8bafa98 100644
  					padding);
  			if (cryptedlen != -1) {
  				cryptedbuf = emalloc(cryptedlen + 1);
-@@ -4669,13 +4813,13 @@ PHP_FUNCTION(openssl_public_encrypt)
+@@ -4669,13 +4814,13 @@ PHP_FUNCTION(openssl_public_encrypt)
  	cryptedlen = EVP_PKEY_size(pkey);
  	cryptedbuf = emalloc(cryptedlen + 1);
  
@@ -631,7 +641,7 @@ index f8641c6..8bafa98 100644
  						padding) == cryptedlen);
  			break;
  		default:
-@@ -4728,13 +4872,13 @@ PHP_FUNCTION(openssl_public_decrypt)
+@@ -4728,13 +4873,13 @@ PHP_FUNCTION(openssl_public_decrypt)
  	cryptedlen = EVP_PKEY_size(pkey);
  	crypttemp = emalloc(cryptedlen + 1);
  
@@ -647,7 +657,7 @@ index f8641c6..8bafa98 100644
  					padding);
  			if (cryptedlen != -1) {
  				cryptedbuf = emalloc(cryptedlen + 1);
-@@ -4798,7 +4942,7 @@ PHP_FUNCTION(openssl_sign)
+@@ -4798,7 +4943,7 @@ PHP_FUNCTION(openssl_sign)
  	long keyresource = -1;
  	char * data;
  	int data_len;
@@ -656,7 +666,7 @@ index f8641c6..8bafa98 100644
  	zval *method = NULL;
  	long signature_algo = OPENSSL_ALGO_SHA1;
  	const EVP_MD *mdtype;
-@@ -4831,9 +4975,11 @@ PHP_FUNCTION(openssl_sign)
+@@ -4831,9 +4976,11 @@ PHP_FUNCTION(openssl_sign)
  	siglen = EVP_PKEY_size(pkey);
  	sigbuf = emalloc(siglen + 1);
  
@@ -671,7 +681,7 @@ index f8641c6..8bafa98 100644
  		zval_dtor(signature);
  		sigbuf[siglen] = '\0';
  		ZVAL_STRINGL(signature, (char *)sigbuf, siglen, 0);
-@@ -4842,7 +4988,7 @@ PHP_FUNCTION(openssl_sign)
+@@ -4842,7 +4989,7 @@ PHP_FUNCTION(openssl_sign)
  		efree(sigbuf);
  		RETVAL_FALSE;
  	}
@@ -680,7 +690,7 @@ index f8641c6..8bafa98 100644
  	if (keyresource == -1) {
  		EVP_PKEY_free(pkey);
  	}
-@@ -4855,8 +5001,8 @@ PHP_FUNCTION(openssl_verify)
+@@ -4855,8 +5002,8 @@ PHP_FUNCTION(openssl_verify)
  {
  	zval **key;
  	EVP_PKEY *pkey;
@@ -691,7 +701,7 @@ index f8641c6..8bafa98 100644
  	const EVP_MD *mdtype;
  	long keyresource = -1;
  	char * data;	int data_len;
-@@ -4890,10 +5036,13 @@ PHP_FUNCTION(openssl_verify)
+@@ -4890,10 +5037,13 @@ PHP_FUNCTION(openssl_verify)
  		RETURN_FALSE;
  	}
  
@@ -709,7 +719,7 @@ index f8641c6..8bafa98 100644
  
  	if (keyresource == -1) {
  		EVP_PKEY_free(pkey);
-@@ -4917,7 +5066,7 @@ PHP_FUNCTION(openssl_seal)
+@@ -4917,7 +5067,7 @@ PHP_FUNCTION(openssl_seal)
  	char *method =NULL;
  	int method_len = 0;
  	const EVP_CIPHER *cipher;
@@ -718,7 +728,7 @@ index f8641c6..8bafa98 100644
  
  	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "szza/|s", &data, &data_len, &sealdata, &ekeys, &pubkeys, &method, &method_len) == FAILURE) {
  		return;
-@@ -4967,9 +5116,10 @@ PHP_FUNCTION(openssl_seal)
+@@ -4967,9 +5117,10 @@ PHP_FUNCTION(openssl_seal)
  		i++;
  	}
  
@@ -731,7 +741,7 @@ index f8641c6..8bafa98 100644
  		goto clean_exit;
  	}
  
-@@ -4979,17 +5129,17 @@ PHP_FUNCTION(openssl_seal)
+@@ -4979,15 +5130,15 @@ PHP_FUNCTION(openssl_seal)
  	iv = ivlen ? emalloc(ivlen + 1) : NULL;
  #endif
  	/* allocate one byte extra to make room for \0 */
@@ -740,8 +750,12 @@ index f8641c6..8bafa98 100644
 +	buf = emalloc(data_len + EVP_CIPHER_CTX_block_size(ctx));
 +	EVP_CIPHER_CTX_cleanup(ctx);
  
--	if (!EVP_SealInit(&ctx, cipher, eks, eksl, NULL, pkeys, nkeys) || !EVP_SealUpdate(&ctx, buf, &len1, (unsigned char *)data, data_len)) {
-+	if (!EVP_SealInit(ctx, cipher, eks, eksl, NULL, pkeys, nkeys) || !EVP_SealUpdate(ctx, buf, &len1, (unsigned char *)data, data_len)) {
+-	if (EVP_SealInit(&ctx, cipher, eks, eksl, NULL, pkeys, nkeys) <= 0 ||
+-			!EVP_SealUpdate(&ctx, buf, &len1, (unsigned char *)data, data_len) ||
+-			!EVP_SealFinal(&ctx, buf + len1, &len2)) {
++	if (!EVP_SealInit(ctx, cipher, eks, eksl, NULL, pkeys, nkeys) ||
++			!EVP_SealUpdate(ctx, buf, &len1, (unsigned char *)data, data_len) ||
++			!EVP_SealFinal(ctx, buf + len1, &len2)) {
  		RETVAL_FALSE;
  		efree(buf);
 -		EVP_CIPHER_CTX_cleanup(&ctx);
@@ -749,12 +763,7 @@ index f8641c6..8bafa98 100644
  		goto clean_exit;
  	}
  
--	EVP_SealFinal(&ctx, buf + len1, &len2);
-+	EVP_SealFinal(ctx, buf + len1, &len2);
- 
- 	if (len1 + len2 > 0) {
- 		zval_dtor(sealdata);
-@@ -5018,7 +5168,7 @@ PHP_FUNCTION(openssl_seal)
+@@ -5018,7 +5169,7 @@ PHP_FUNCTION(openssl_seal)
  		efree(buf);
  	}
  	RETVAL_LONG(len1 + len2);
@@ -763,7 +772,7 @@ index f8641c6..8bafa98 100644
  
  clean_exit:
  	for (i=0; i<nkeys; i++) {
-@@ -5045,7 +5195,7 @@ PHP_FUNCTION(openssl_open)
+@@ -5045,7 +5196,7 @@ PHP_FUNCTION(openssl_open)
  	int len1, len2;
  	unsigned char *buf;
  	long keyresource = -1;
@@ -772,7 +781,7 @@ index f8641c6..8bafa98 100644
  	char * data;	int data_len;
  	char * ekey;	int ekey_len;
  	char *method =NULL;
-@@ -5074,8 +5224,10 @@ PHP_FUNCTION(openssl_open)
+@@ -5074,8 +5225,10 @@ PHP_FUNCTION(openssl_open)
  	
  	buf = emalloc(data_len + 1);
  
@@ -785,7 +794,7 @@ index f8641c6..8bafa98 100644
  			efree(buf);
  			RETVAL_FALSE;
  		} else {
-@@ -5091,7 +5243,7 @@ PHP_FUNCTION(openssl_open)
+@@ -5091,7 +5244,7 @@ PHP_FUNCTION(openssl_open)
  	if (keyresource == -1) {
  		EVP_PKEY_free(pkey);
  	}
@@ -794,7 +803,7 @@ index f8641c6..8bafa98 100644
  }
  /* }}} */
  
-@@ -5151,7 +5303,7 @@ PHP_FUNCTION(openssl_digest)
+@@ -5151,7 +5304,7 @@ PHP_FUNCTION(openssl_digest)
  	char *data, *method;
  	int data_len, method_len;
  	const EVP_MD *mdtype;
@@ -803,7 +812,7 @@ index f8641c6..8bafa98 100644
  	int siglen;
  	unsigned char *sigbuf;
  
-@@ -5167,9 +5319,10 @@ PHP_FUNCTION(openssl_digest)
+@@ -5167,9 +5320,10 @@ PHP_FUNCTION(openssl_digest)
  	siglen = EVP_MD_size(mdtype);
  	sigbuf = emalloc(siglen + 1);
  
@@ -817,7 +826,7 @@ index f8641c6..8bafa98 100644
  		if (raw_output) {
  			sigbuf[siglen] = '\0';
  			RETVAL_STRINGL((char *)sigbuf, siglen, 0);
-@@ -5185,6 +5338,8 @@ PHP_FUNCTION(openssl_digest)
+@@ -5185,6 +5339,8 @@ PHP_FUNCTION(openssl_digest)
  		efree(sigbuf);
  		RETVAL_FALSE;
  	}
@@ -826,7 +835,7 @@ index f8641c6..8bafa98 100644
  }
  /* }}} */
  
-@@ -5230,7 +5385,7 @@ PHP_FUNCTION(openssl_encrypt)
+@@ -5230,7 +5386,7 @@ PHP_FUNCTION(openssl_encrypt)
  	char *data, *method, *password, *iv = "";
  	int data_len, method_len, password_len, iv_len = 0, max_iv_len;
  	const EVP_CIPHER *cipher_type;
@@ -835,7 +844,7 @@ index f8641c6..8bafa98 100644
  	int i=0, outlen, keylen;
  	unsigned char *outbuf, *key;
  	zend_bool free_iv;
-@@ -5244,6 +5399,12 @@ PHP_FUNCTION(openssl_encrypt)
+@@ -5244,6 +5400,12 @@ PHP_FUNCTION(openssl_encrypt)
  		RETURN_FALSE;
  	}
  
@@ -848,7 +857,7 @@ index f8641c6..8bafa98 100644
  	keylen = EVP_CIPHER_key_length(cipher_type);
  	if (keylen > password_len) {
  		key = emalloc(keylen);
-@@ -5262,19 +5423,19 @@ PHP_FUNCTION(openssl_encrypt)
+@@ -5262,19 +5424,19 @@ PHP_FUNCTION(openssl_encrypt)
  	outlen = data_len + EVP_CIPHER_block_size(cipher_type);
  	outbuf = safe_emalloc(outlen, 1, 1);
  
@@ -874,7 +883,7 @@ index f8641c6..8bafa98 100644
  		outlen += i;
  		if (options & OPENSSL_RAW_DATA) {
  			outbuf[outlen] = '\0';
-@@ -5301,7 +5462,7 @@ PHP_FUNCTION(openssl_encrypt)
+@@ -5301,7 +5463,7 @@ PHP_FUNCTION(openssl_encrypt)
  	if (free_iv) {
  		efree(iv);
  	}
@@ -883,7 +892,7 @@ index f8641c6..8bafa98 100644
  }
  /* }}} */
  
-@@ -5313,7 +5474,7 @@ PHP_FUNCTION(openssl_decrypt)
+@@ -5313,7 +5475,7 @@ PHP_FUNCTION(openssl_decrypt)
  	char *data, *method, *password, *iv = "";
  	int data_len, method_len, password_len, iv_len = 0;
  	const EVP_CIPHER *cipher_type;
@@ -892,7 +901,7 @@ index f8641c6..8bafa98 100644
  	int i, outlen, keylen;
  	unsigned char *outbuf, *key;
  	int base64_str_len;
-@@ -5335,10 +5496,17 @@ PHP_FUNCTION(openssl_decrypt)
+@@ -5335,10 +5497,17 @@ PHP_FUNCTION(openssl_decrypt)
  		RETURN_FALSE;
  	}
  
@@ -910,7 +919,7 @@ index f8641c6..8bafa98 100644
  			RETURN_FALSE;
  		}
  		data_len = base64_str_len;
-@@ -5359,17 +5527,17 @@ PHP_FUNCTION(openssl_decrypt)
+@@ -5359,17 +5528,17 @@ PHP_FUNCTION(openssl_decrypt)
  	outlen = data_len + EVP_CIPHER_block_size(cipher_type);
  	outbuf = emalloc(outlen + 1);
  
@@ -934,7 +943,7 @@ index f8641c6..8bafa98 100644
  		outlen += i;
  		outbuf[outlen] = '\0';
  		RETVAL_STRINGL((char *)outbuf, outlen, 0);
-@@ -5386,7 +5554,7 @@ PHP_FUNCTION(openssl_decrypt)
+@@ -5386,7 +5555,7 @@ PHP_FUNCTION(openssl_decrypt)
  	if (base64_str) {
  		efree(base64_str);
  	}
@@ -943,7 +952,7 @@ index f8641c6..8bafa98 100644
  }
  /* }}} */
  
-@@ -5424,6 +5592,7 @@ PHP_FUNCTION(openssl_dh_compute_key)
+@@ -5424,6 +5593,7 @@ PHP_FUNCTION(openssl_dh_compute_key)
  	zval *key;
  	char *pub_str;
  	int pub_len;
@@ -951,7 +960,7 @@ index f8641c6..8bafa98 100644
  	EVP_PKEY *pkey;
  	BIGNUM *pub;
  	char *data;
-@@ -5433,14 +5602,20 @@ PHP_FUNCTION(openssl_dh_compute_key)
+@@ -5433,14 +5603,20 @@ PHP_FUNCTION(openssl_dh_compute_key)
  		return;
  	}
  	ZEND_FETCH_RESOURCE(pkey, EVP_PKEY *, &key, -1, "OpenSSL key", le_key);
@@ -1185,31 +1194,5 @@ index 828be8f..06e4e55 100644
  
  			*signature_len = phar_hex_str((const char*)sig, sig_len, signature TSRMLS_CC);
 -- 
-2.9.3
-
-From 96201be7ef2732231c0e0103bf588eb0ee12b653 Mon Sep 17 00:00:00 2001
-From: Remi Collet <remi@remirepo.net>
-Date: Wed, 26 Apr 2017 16:27:32 +0200
-Subject: [PATCH] Cherry-pick 6822af2e738698aab9fa34ca0c572309960bcd74
-
----
- ext/openssl/openssl.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/ext/openssl/openssl.c b/ext/openssl/openssl.c
-index 8bafa98..191d570 100644
---- a/ext/openssl/openssl.c
-+++ b/ext/openssl/openssl.c
-@@ -827,7 +827,8 @@ static int add_oid_section(struct php_x509_request * req TSRMLS_DC) /* {{{ */
- 	}
- 	for (i = 0; i < sk_CONF_VALUE_num(sktmp); i++) {
- 		cnf = sk_CONF_VALUE_value(sktmp, i);
--		if (OBJ_create(cnf->value, cnf->name, cnf->name) == NID_undef) {
-+		if (OBJ_sn2nid(cnf->name) == NID_undef && OBJ_ln2nid(cnf->name) == NID_undef &&
-+				OBJ_create(cnf->value, cnf->name, cnf->name) == NID_undef) {
- 			php_error_docref(NULL TSRMLS_CC, E_WARNING, "problem creating object %s=%s", cnf->name, cnf->value);
- 			return FAILURE;
- 		}
--- 
-2.9.3
+2.9.4
 

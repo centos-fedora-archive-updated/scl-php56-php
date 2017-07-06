@@ -59,7 +59,7 @@
 
 %global mysql_sock %(mysql_config --socket  2>/dev/null || echo /var/lib/mysql/mysql.sock)
 
-%global oraclever 12.1
+%global oraclever 12.2
 
 # Build for LiteSpeed Web Server (LSAPI)
 %global with_lsws     1
@@ -138,11 +138,11 @@
 %endif
 
 #global rcver  RC1
-%global rpmrel 5
+%global rpmrel 1
 
 Summary: PHP scripting language for creating dynamic web sites
 Name: %{?scl_prefix}php
-Version: 5.6.30
+Version: 5.6.31
 %if 0%{?rcver:1}
 Release: 0.%{rpmrel}.%{rcver}%{?dist}
 %else
@@ -176,7 +176,7 @@ Source51: opcache-default.blacklist
 
 # Build fixes
 Patch1: php-5.6.30-interbase.patch
-Patch2: php-5.6.30-openssl11.patch
+Patch2: php-5.6.31-openssl11.patch
 Patch5: php-5.6.3-includedir.patch
 Patch6: php-5.6.3-embed.patch
 Patch7: php-5.3.0-recode.patch
@@ -200,6 +200,7 @@ Patch47: php-5.6.3-phpinfo.patch
 Patch91: php-5.6.3-oci8conf.patch
 
 # Upstream fixes (100+)
+Patch100: php-5.6.31-oci.patch
 
 # Security fixes (200+)
 
@@ -900,6 +901,7 @@ support for using the enchant library to PHP.
 %patch91 -p1 -b .remi-oci8
 
 # upstream patches
+%patch100 -p1 -b .pdo_oci
 
 # security patches
 
@@ -1831,6 +1833,10 @@ fi
 
 
 %changelog
+* Thu Jul  6 2017 Remi Collet <remi@fedoraproject.org> 5.6.31-1
+- Update to 5.6.31 - http://www.php.net/releases/5_6_31.php
+- use oracle instant client version 12.2
+
 * Tue Mar 21 2017 Remi Collet <remi@remirepo.net> - 5.6.30-5
 - add patch for tests with tzdata 2017.1
 
