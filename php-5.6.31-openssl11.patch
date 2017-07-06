@@ -1,4 +1,4 @@
-From d0c386012affb194ea4600ff2b6dbe447ff1898e Mon Sep 17 00:00:00 2001
+From 4ca75ff1f3c341b83932f85310595f5c0a10f57e Mon Sep 17 00:00:00 2001
 From: Remi Collet <fedora@famillecollet.com>
 Date: Mon, 20 Mar 2017 11:45:54 +0100
 Subject: [PATCH] backport needed changes for OpenSSL 1.1
@@ -15,7 +15,7 @@ Subject: [PATCH] backport needed changes for OpenSSL 1.1
  8 files changed, 371 insertions(+), 206 deletions(-)
 
 diff --git a/ext/openssl/openssl.c b/ext/openssl/openssl.c
-index a78a8fb..fc9a708 100644
+index a78a8fb..eda68f2 100644
 --- a/ext/openssl/openssl.c
 +++ b/ext/openssl/openssl.c
 @@ -68,7 +68,9 @@
@@ -753,7 +753,7 @@ index a78a8fb..fc9a708 100644
 -	if (EVP_SealInit(&ctx, cipher, eks, eksl, NULL, pkeys, nkeys) <= 0 ||
 -			!EVP_SealUpdate(&ctx, buf, &len1, (unsigned char *)data, data_len) ||
 -			!EVP_SealFinal(&ctx, buf + len1, &len2)) {
-+	if (!EVP_SealInit(ctx, cipher, eks, eksl, NULL, pkeys, nkeys) ||
++	if (EVP_SealInit(ctx, cipher, eks, eksl, NULL, pkeys, nkeys) <= 0 ||
 +			!EVP_SealUpdate(ctx, buf, &len1, (unsigned char *)data, data_len) ||
 +			!EVP_SealFinal(ctx, buf + len1, &len2)) {
  		RETVAL_FALSE;

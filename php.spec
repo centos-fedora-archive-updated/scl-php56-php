@@ -138,7 +138,7 @@
 %endif
 
 #global rcver  RC1
-%global rpmrel 1
+%global rpmrel 2
 
 Summary: PHP scripting language for creating dynamic web sites
 Name: %{?scl_prefix}php
@@ -1833,6 +1833,9 @@ fi
 
 
 %changelog
+* Thu Jul  6 2017 Remi Collet <remi@fedoraproject.org> 5.6.31-2
+- refresh openssl 1.1 patch for F26
+
 * Thu Jul  6 2017 Remi Collet <remi@fedoraproject.org> 5.6.31-1
 - Update to 5.6.31 - http://www.php.net/releases/5_6_31.php
 - use oracle instant client version 12.2
