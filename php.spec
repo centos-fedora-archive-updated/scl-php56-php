@@ -99,20 +99,11 @@
 %global isasuffix %nil
 %endif
 
-%if 0%{?fedora} < 12 && 0%{?rhel} < 6
-%global with_dtrace 0
-%else
 %global with_dtrace 1
-%endif
 
 # build with system libgd (gd-last in remi repo)
 %global  with_libgd 1
-
-%if 0%{?fedora} < 17 && 0%{?rhel} < 6
-%global  with_vpx  0
-%else
-%global  with_vpx  1
-%endif
+%global  with_vpx   1
 
 # systemd to manage the service, Fedora >= 15
 # systemd with notify mode, Fedora >= 16
@@ -138,7 +129,7 @@
 %endif
 
 #global rcver  RC1
-%global rpmrel 2
+%global rpmrel 3
 
 Summary: PHP scripting language for creating dynamic web sites
 Name: %{?scl_prefix}php
@@ -175,8 +166,9 @@ Source50: opcache.ini
 Source51: opcache-default.blacklist
 
 # Build fixes
-Patch1: php-5.6.30-interbase.patch
-Patch2: php-5.6.31-openssl11.patch
+Patch1: php-7.1.7-httpd.patch
+Patch2: php-5.6.30-interbase.patch
+Patch3: php-5.6.31-openssl11.patch
 Patch5: php-5.6.3-includedir.patch
 Patch6: php-5.6.3-embed.patch
 Patch7: php-5.3.0-recode.patch
@@ -212,8 +204,6 @@ Patch300: php-5.6.30-datetests.patch
 Patch301: php-5.6.0-oldpcre.patch
 
 # WIP
-
-BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 BuildRequires: bzip2-devel, curl-devel >= 7.9, %{db_devel}
 BuildRequires: httpd-devel >= 2.0.46-1, pam-devel
@@ -874,9 +864,10 @@ support for using the enchant library to PHP.
 
 %setup -q -n php-%{version}%{?rcver}
 
-%patch1 -p1 -b .fb_config
+%patch1 -p1 -b .mpmcheck
+%patch2 -p1 -b .fb_config
 %if 0%{?fedora} >= 26
-%patch2 -p1 -b .openssl11
+%patch3 -p1 -b .openssl11
 %endif
 %patch5 -p1 -b .includedir
 %patch6 -p1 -b .embed
@@ -888,7 +879,7 @@ support for using the enchant library to PHP.
 
 %patch40 -p1 -b .dlopen
 %patch41 -p1 -b .dtrace
-%if 0%{?fedora} >= 24 || 0%{?rhel} >= 5
+%if 0%{?fedora} >= 25 || 0%{?rhel} >= 6
 %patch42 -p1 -b .systzdata
 %endif
 %patch43 -p1 -b .headers
@@ -1039,17 +1030,11 @@ sed -e 's:%{_root_sysconfdir}:%{_sysconfdir}:' \
 
 %build
 # aclocal workaround - to be improved
-%if 0%{?fedora} >= 11 || 0%{?rhel} >= 6
 cat `aclocal --print-ac-dir`/{libtool,ltoptions,ltsugar,ltversion,lt~obsolete}.m4 >>aclocal.m4
-%endif
 
 # Force use of system libtool:
 libtoolize --force --copy
-%if 0%{?fedora} >= 11 || 0%{?rhel} >= 6
 cat `aclocal --print-ac-dir`/{libtool,ltoptions,ltsugar,ltversion,lt~obsolete}.m4 >build/libtool.m4
-%else
-cat `aclocal --print-ac-dir`/libtool.m4 > build/libtool.m4
-%endif
 
 # Regenerate configure scripts (patches change config.m4's)
 touch configure.in
@@ -1110,7 +1095,7 @@ ln -sf ../configure
     --with-layout=GNU \
     --with-kerberos \
     --with-libxml-dir=%{_root_prefix} \
-%if 0%{?fedora} >= 24 || 0%{?rhel} >= 5
+%if 0%{?fedora} >= 25 || 0%{?rhel} >= 6
     --with-system-tzdata \
 %endif
     --with-mhash \
@@ -1393,6 +1378,8 @@ sed -e 's:/run:%{_localstatedir}/run:' \
     -e 's:php-fpm.service:%{?scl_prefix}php-fpm.service:' \
     -e 's:/usr/sbin:%{_sbindir}:' \
     -i $RPM_BUILD_ROOT%{_unitdir}/%{?scl_prefix}php-fpm.service
+sed -e 's/^pid/;pid/' \
+    -i $RPM_BUILD_ROOT%{_sysconfdir}/php-fpm.conf
 # this folder requires systemd >= 204
 install -m 755 -d $RPM_BUILD_ROOT%{_root_sysconfdir}/systemd/system/%{?scl_prefix}php-fpm.service.d
 %else
@@ -1511,8 +1498,8 @@ extension=${mod}.so
 EOF
     fi
     cat > files.${mod} <<EOF
-%attr(755,root,root) %{_libdir}/php/modules/${mod}.so
-%config(noreplace) %attr(644,root,root) %{_sysconfdir}/php.d/${ini}
+%{_libdir}/php/modules/${mod}.so
+%config(noreplace) %{_sysconfdir}/php.d/${ini}
 EOF
 done
 
@@ -1575,9 +1562,6 @@ rm -rf $RPM_BUILD_ROOT%{_libdir}/php/modules/*.a \
 # Remove irrelevant docs
 rm -f README.{Zeus,QNX,CVS-RULES}
 
-%clean
-[ "$RPM_BUILD_ROOT" != "/" ] && rm -rf $RPM_BUILD_ROOT
-rm files.* macros.*
 
 %if ! %{with_httpd2410}
 %pre fpm
@@ -1658,7 +1642,6 @@ fi
 %{!?_licensedir:%global license %%doc}
 
 %files
-%defattr(-,root,root)
 %{_httpd_moddir}/libphp5.so
 %if 0%{?scl:1}
 %dir %{_libdir}/httpd
@@ -1674,7 +1657,6 @@ fi
 %{_httpd_contentdir}/icons/%{name}.gif
 
 %files common -f files.common
-%defattr(-,root,root)
 %doc CODING_STANDARDS CREDITS EXTENSIONS NEWS README*
 %license LICENSE TSRM_LICENSE regex_COPYRIGHT
 %license libmagic_LICENSE
@@ -1695,7 +1677,6 @@ fi
 %endif
 
 %files cli
-%defattr(-,root,root)
 %{_bindir}/php
 %{_bindir}/php-cgi
 %{_bindir}/phar.phar
@@ -1715,7 +1696,6 @@ fi
 %endif
 
 %files dbg
-%defattr(-,root,root)
 %{_bindir}/phpdbg
 %{_mandir}/man1/phpdbg.1*
 %doc sapi/phpdbg/{README.md,CREDITS}
@@ -1724,7 +1704,6 @@ fi
 %endif
 
 %files fpm
-%defattr(-,root,root)
 %doc php-fpm.conf.default
 %license fpm_LICENSE
 %attr(0770,root,apache) %dir %{_localstatedir}/lib/php/session
@@ -1756,7 +1735,6 @@ fi
 
 %if %{with_lsws}
 %files litespeed
-%defattr(-,root,root)
 %{_bindir}/lsphp
 %if 0%{?scl:1}
 %{_root_bindir}/ls%{scl}
@@ -1764,12 +1742,10 @@ fi
 %endif
 
 %files embedded
-%defattr(-,root,root,-)
 %{_libdir}/libphp5.so
 %{_libdir}/libphp5-%{embed_version}.so
 
 %files devel
-%defattr(-,root,root)
 %{_bindir}/php-config
 %{_includedir}/php
 %{_libdir}/php/build
@@ -1786,19 +1762,16 @@ fi
 %files xml -f files.xml
 %files xmlrpc -f files.xmlrpc
 %files mbstring -f files.mbstring
-%defattr(-,root,root,-)
 %license libmbfl_LICENSE
 %license oniguruma_COPYING
 %license ucgendat_LICENSE
 %files gd -f files.gd
-%defattr(-,root,root,-)
 %if ! %{with_libgd}
 %license libgd_README
 %license libgd_COPYING
 %endif
 %files soap -f files.soap
 %files bcmath -f files.bcmath
-%defattr(-,root,root,-)
 %license libbcmath_COPYING
 %files gmp -f files.gmp
 %files dba -f files.dba
@@ -1833,6 +1806,9 @@ fi
 
 
 %changelog
+* Fri Aug 25 2017 Remi Collet <remi@fedoraproject.org> - 5.6.31-3
+- disable httpd MPM check
+
 * Thu Jul  6 2017 Remi Collet <remi@fedoraproject.org> 5.6.31-2
 - refresh openssl 1.1 patch for F26
 

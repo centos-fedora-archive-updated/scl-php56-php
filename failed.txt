@@ -8,11 +8,12 @@ $ grep -r 'Tests failed' /var/lib/mock/scl56*/build.log
 /var/lib/mock/scl56fc24x/build.log:Tests failed    :    4
 /var/lib/mock/scl56fc25x/build.log:Tests failed    :    4
 /var/lib/mock/scl56fc26x/build.log:Tests failed    :    1
+/var/lib/mock/scl56fc27x/build.log:Tests failed    :    2
 
 
 el6x, el7x
 	4	Bug #33414 [2] (Comprehensive list of incorrect days returned after strotime() / date() tests) [ext/date/tests/bug33414-2.phpt]
-el6x, el7x, fc23x, fc24x, fc25x, fc26x:
+el6x, el7x, fc23x, fc24x, fc25x, fc26x, fc27x:
 	4	Bug #33415 [2] (Possibly invalid non-one-hour DST or timezone shifts) [ext/date/tests/bug33415-2.phpt]
 fc23x
 	4	Bug #32086 (strtotime don't work in DST) [ext/date/tests/bug32086.phpt]
@@ -24,9 +25,12 @@ fc23x, fc24x, fc25x:
 	3	Bug #65538: SSL context "cafile" disallows URL stream wrappers [ext/openssl/tests/bug65538_002.phpt]
 	3	gethostbyname() function - basic return valid ip address test [ext/standard/tests/network/gethostbyname_error004.phpt]
 	3	getmxrr() test [ext/standard/tests/network/getmxrr.phpt]
+fc27x
+	5	substr_compare() [ext/standard/tests/strings/substr_compare.phpt]
 
 
 1	proc_open have erratic results... :(
 2	test fixed upstream
 3	online test
 4	tzdata are no more updated upstream in security branch
+5	need investigation
