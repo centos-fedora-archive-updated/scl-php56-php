@@ -129,7 +129,7 @@
 %endif
 
 #global rcver  RC1
-%global rpmrel 3
+%global rpmrel 4
 
 Summary: PHP scripting language for creating dynamic web sites
 Name: %{?scl_prefix}php
@@ -160,7 +160,8 @@ Source8: php-fpm.sysconfig
 Source9: php.modconf
 Source10: php.conf2
 Source11: php-fpm.init
-Source12: strip.sh
+Source12: php-fpm.wants
+Source13: strip.sh
 # Configuration files for some extensions
 Source50: opcache.ini
 Source51: opcache-default.blacklist
@@ -238,6 +239,10 @@ Requires: %{?scl_prefix}php-cli%{?_isa} = %{version}-%{release}
 Requires(pre): httpd-filesystem
 %else
 Requires(pre): httpd
+%endif
+%if 0%{?fedora} >= 27
+# httpd have threaded MPM by default
+Requires: %{?scl_prefix}php-fpm%{?_isa} = %{version}-%{release}
 %endif
 
 
@@ -1371,8 +1376,11 @@ mv $RPM_BUILD_ROOT%{_sysconfdir}/php-fpm.conf.default .
 # install -m 644 php-fpm.tmpfiles $RPM_BUILD_ROOT%{_prefix}/lib/tmpfiles.d/php-fpm.conf
 # install systemd unit files and scripts for handling server startup
 %if %{with_systemd}
-install -m 755 -d $RPM_BUILD_ROOT%{_unitdir}
-install -m 644 %{SOURCE6} $RPM_BUILD_ROOT%{_unitdir}/%{?scl_prefix}php-fpm.service
+install -Dm 644 %{SOURCE6}  $RPM_BUILD_ROOT%{_unitdir}/%{?scl_prefix}php-fpm.service
+%if 0%{?fedora} >= 27
+install -Dm 644 %{SOURCE12} $RPM_BUILD_ROOT%{_unitdir}/httpd.service.d/%{?scl_prefix}php-fpm.conf
+install -Dm 644 %{SOURCE12} $RPM_BUILD_ROOT%{_unitdir}/nginx.service.d/%{?scl_prefix}php-fpm.conf
+%endif
 sed -e 's:/run:%{_localstatedir}/run:' \
     -e 's:/etc/sysconfig:%{_sysconfdir}/sysconfig:' \
     -e 's:php-fpm.service:%{?scl_prefix}php-fpm.service:' \
@@ -1720,6 +1728,10 @@ fi
 # {_prefix}/lib/tmpfiles.d/php-fpm.conf
 %if %{with_systemd}
 %{_unitdir}/%{?scl_prefix}php-fpm.service
+%if 0%{?fedora} >= 27
+%{_unitdir}/httpd.service.d/%{?scl_prefix}php-fpm.conf
+%{_unitdir}/nginx.service.d/%{?scl_prefix}php-fpm.conf
+%endif
 %dir %{_root_sysconfdir}/systemd/system/%{?scl_prefix}php-fpm.service.d
 %else
 %{_root_initddir}/%{?scl_prefix}php-fpm
@@ -1806,6 +1818,9 @@ fi
 
 
 %changelog
+* Mon Sep 25 2017 Remi Collet <remi@fedoraproject.org> - 5.6.31-4
+- F27: php now requires php-fpm and start it with httpd / nginx
+
 * Fri Aug 25 2017 Remi Collet <remi@fedoraproject.org> - 5.6.31-3
 - disable httpd MPM check
 
