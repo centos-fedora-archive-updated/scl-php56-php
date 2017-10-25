@@ -681,15 +681,3 @@ diff -up ./ext/standard/tests/serialize/bug64146.phpt.old ./ext/standard/tests/s
 -2
 +%d
  Done
-diff -up ./ext/date/tests/bug53437_var3.phpt.old ./ext/date/tests/bug53437_var3.phpt
---- ./ext/date/tests/bug53437_var3.phpt.old	2017-03-21 12:32:27.824930958 +0100
-+++ ./ext/date/tests/bug53437_var3.phpt	2017-03-21 12:33:57.490387535 +0100
-@@ -40,7 +40,7 @@ object(DateInterval)#%d (15) {
-   ["special_amount"]=>
-   int(-1)
-   ["have_weekday_relative"]=>
--  int(9)
-+  int(%d)
-   ["have_special_relative"]=>
-   int(0)
- }

@@ -129,11 +129,11 @@
 %endif
 
 #global rcver  RC1
-%global rpmrel 4
+%global rpmrel 1
 
 Summary: PHP scripting language for creating dynamic web sites
 Name: %{?scl_prefix}php
-Version: 5.6.31
+Version: 5.6.32
 %if 0%{?rcver:1}
 Release: 0.%{rpmrel}.%{rcver}%{?dist}
 %else
@@ -242,7 +242,7 @@ Requires(pre): httpd
 %endif
 %if 0%{?fedora} >= 27
 # httpd have threaded MPM by default
-Requires: %{?scl_prefix}php-fpm%{?_isa} = %{version}-%{release}
+Recommends: %{?scl_prefix}php-fpm%{?_isa} = %{version}-%{release}
 %endif
 
 
@@ -1818,6 +1818,9 @@ fi
 
 
 %changelog
+* Wed Oct 25 2017 Remi Collet <remi@fedoraproject.org> 5.6.32-1
+- Update to 5.6.32 - http://www.php.net/releases/5_6_32.php
+
 * Mon Sep 25 2017 Remi Collet <remi@fedoraproject.org> - 5.6.31-4
 - F27: php now requires php-fpm and start it with httpd / nginx
 
