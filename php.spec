@@ -133,7 +133,7 @@
 
 Summary: PHP scripting language for creating dynamic web sites
 Name: %{?scl_prefix}php
-Version: 5.6.32
+Version: 5.6.33
 %if 0%{?rcver:1}
 Release: 0.%{rpmrel}.%{rcver}%{?dist}
 %else
@@ -1818,6 +1818,9 @@ fi
 
 
 %changelog
+* Wed Jan  3 2018 Remi Collet <remi@fedoraproject.org> 5.6.33-1
+- Update to 5.6.33 - http://www.php.net/releases/5_6_33.php
+
 * Wed Oct 25 2017 Remi Collet <remi@fedoraproject.org> 5.6.32-1
 - Update to 5.6.32 - http://www.php.net/releases/5_6_32.php
 
