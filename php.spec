@@ -1647,6 +1647,12 @@ fi
 %endif
 
 
+%if 0%{?fedora} < 28 && 0%{?rhel} < 8
+%post   embedded -p /sbin/ldconfig
+%postun embedded -p /sbin/ldconfig
+%endif
+
+
 %{!?_licensedir:%global license %%doc}
 
 %files
