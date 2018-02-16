@@ -224,7 +224,13 @@ BuildRequires: zlib-devel, smtpdaemon, libedit-devel
 %if %{with_libpcre}
 BuildRequires: pcre-devel >= 8.20
 %endif
-BuildRequires: bzip2, perl, libtool >= 1.4.3, gcc-c++
+BuildRequires: bzip2
+BuildRequires: perl
+BuildRequires: autoconf
+BuildRequires: automake
+BuildRequires: gcc
+BuildRequires: gcc-c++
+BuildRequires: libtool
 BuildRequires: libtool-ltdl-devel
 %if %{with_dtrace}
 BuildRequires: systemtap-sdt-devel
@@ -404,7 +410,13 @@ the %{?scl_prefix}php package and the %{?scl_prefix}php-cli package.
 %package devel
 Group: Development/Libraries
 Summary: Files needed for building PHP extensions
-Requires: %{?scl_prefix}php-cli%{?_isa} = %{version}-%{release}, autoconf, automake
+Requires: %{?scl_prefix}php-cli%{?_isa} = %{version}-%{release}
+# always needed to build extension
+Requires: autoconf
+Requires: automake
+Requires: gcc
+Requires: gcc-c++
+Requires: libtool
 %if %{with_libpcre}
 Requires: pcre-devel%{?_isa} >= 8.20
 %endif
