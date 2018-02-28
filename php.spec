@@ -133,7 +133,7 @@
 
 Summary: PHP scripting language for creating dynamic web sites
 Name: %{?scl_prefix}php
-Version: 5.6.33
+Version: 5.6.34
 %if 0%{?rcver:1}
 Release: 0.%{rpmrel}.%{rcver}%{?dist}
 %else
@@ -1398,8 +1398,6 @@ sed -e 's:/run:%{_localstatedir}/run:' \
     -e 's:php-fpm.service:%{?scl_prefix}php-fpm.service:' \
     -e 's:/usr/sbin:%{_sbindir}:' \
     -i $RPM_BUILD_ROOT%{_unitdir}/%{?scl_prefix}php-fpm.service
-sed -e 's/^pid/;pid/' \
-    -i $RPM_BUILD_ROOT%{_sysconfdir}/php-fpm.conf
 # this folder requires systemd >= 204
 install -m 755 -d $RPM_BUILD_ROOT%{_root_sysconfdir}/systemd/system/%{?scl_prefix}php-fpm.service.d
 %else
@@ -1836,6 +1834,11 @@ fi
 
 
 %changelog
+* Wed Feb 28 2018 Remi Collet <remi@remirepo.net> - 5.6.34-1
+- Update to 5.6.34 - http://www.php.net/releases/5_6_34.php
+- FPM: revert pid file removal
+- improve devel dependencies
+
 * Wed Jan  3 2018 Remi Collet <remi@fedoraproject.org> 5.6.33-1
 - Update to 5.6.33 - http://www.php.net/releases/5_6_33.php
 

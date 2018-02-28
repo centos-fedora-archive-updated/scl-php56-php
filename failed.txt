@@ -1,28 +1,23 @@
-===== 5.6.33 (2018-01-04)
+===== 5.6.34 (2018-03-01)
 
 $ grep -r 'Tests failed' /var/lib/mock/scl56*/build.log
 
 /var/lib/mock/scl56el6x/build.log:Tests failed    :     2
 /var/lib/mock/scl56el7x/build.log:Tests failed    :     2
-/var/lib/mock/scl56fc24x/build.log:Tests failed    :    6
 /var/lib/mock/scl56fc25x/build.log:Tests failed    :    1
 /var/lib/mock/scl56fc26x/build.log:Tests failed    :    3
 /var/lib/mock/scl56fc27x/build.log:Tests failed    :    4
+/var/lib/mock/scl56fc28x/build.log:Tests failed    :    4
 
 
-fc24x, el6x, el7x
+el6x, el7x:
 	4	Bug #33414 [2] (Comprehensive list of incorrect days returned after strotime() / date() tests) [ext/date/tests/bug33414-2.phpt]
-fc24x:
-	4	Bug #32086 (strtotime don't work in DST) [ext/date/tests/bug32086.phpt]
-	4	Bug #33414 [1] (Comprehensive list of incorrect days returned after strotime() / date() tests) [ext/date/tests/bug33414-1.phpt]
-	4	Bug #33415 [1] (Possibly invalid non-one-hour DST or timezone shifts) [ext/date/tests/bug33415-1.phpt]
-	4	date_modify() function [1] [ext/date/tests/date_modify-1.phpt]
-fc24x, fc25x, fc26x, fc27x:
+el6x, el7x, fc25x, fc26x, fc27x, fc28x:
 	4	Bug #33415 [2] (Possibly invalid non-one-hour DST or timezone shifts) [ext/date/tests/bug33415-2.phpt]
-fc26x, fc27x:
+fc26x, fc27x, fc28x:
 	4	Bug #51819 (Case discrepancy in timezone names cause Uncaught exception and fatal error) [ext/date/tests/bug51819.phpt]
 	4	Test date_sunset() function : usage variation - Passing high positive and negative float values to time argument. [ext/date/tests/date_sunset_variation9.phpt]
-fc27x:
+fc27x, fc28x:
 	2	substr_compare() [ext/standard/tests/strings/substr_compare.phpt]
 
 
