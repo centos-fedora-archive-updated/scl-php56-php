@@ -129,7 +129,7 @@
 %endif
 
 #global rcver  RC1
-%global rpmrel 1
+%global rpmrel 2
 
 Summary: PHP scripting language for creating dynamic web sites
 Name: %{?scl_prefix}php
@@ -1622,21 +1622,21 @@ if [ $1 = 0 ]; then
 fi
 %endif
 
+%if 0%{?fedora} < 27 && 0%{?rhel} < 8
 %postun fpm
-%if 0%{?systemd_postun_with_restart:1}
-%systemd_postun_with_restart %{?scl:%{scl}-}php-fpm.service
-%else
 %if %{with_systemd}
-/bin/systemctl daemon-reload >/dev/null 2>&1 || :
-if [ $1 -ge 1 ]; then
-    # Package upgrade, not uninstall
-    /bin/systemctl try-restart %{?scl_prefix}php-fpm.service >/dev/null 2>&1 || :
-fi
+%systemd_postun_with_restart %{?scl:%{scl}-}php-fpm.service
 %else
 if [ $1 -ge 1 ]; then
     /sbin/service %{?scl_prefix}php-fpm condrestart >/dev/null 2>&1 || :
 fi
 %endif
+%endif
+
+%if 0%{?fedora} >= 27 || 0%{?rhel} >= 8
+# Raised by new pool installation or new extension installation
+%transfiletriggerin fpm -- %{_sysconfdir}/php-fpm.d %{_sysconfdir}/php.d
+systemctl try-restart %{?scl:%{scl}-}php-fpm.service >/dev/null 2>&1 || :
 %endif
 
 # Handle upgrading from SysV initscript to native systemd unit.
@@ -1834,6 +1834,10 @@ fi
 
 
 %changelog
+* Thu Mar 15 2018 Remi Collet <remi@remirepo.net> - 5.6.34-2
+- add file trigger to restart the php-fpm service
+  when new pool or new extension installed (F27+)
+
 * Wed Feb 28 2018 Remi Collet <remi@remirepo.net> - 5.6.34-1
 - Update to 5.6.34 - http://www.php.net/releases/5_6_34.php
 - FPM: revert pid file removal
