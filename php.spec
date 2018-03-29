@@ -129,11 +129,11 @@
 %endif
 
 #global rcver  RC1
-%global rpmrel 2
+%global rpmrel 1
 
 Summary: PHP scripting language for creating dynamic web sites
 Name: %{?scl_prefix}php
-Version: 5.6.34
+Version: 5.6.35
 %if 0%{?rcver:1}
 Release: 0.%{rpmrel}.%{rcver}%{?dist}
 %else
@@ -1834,6 +1834,10 @@ fi
 
 
 %changelog
+* Thu Mar 29 2018 Remi Collet <remi@remirepo.net> - 5.6.35-1
+- Update to 5.6.35 - http://www.php.net/releases/5_6_35.php
+- FPM: update default pool configuration for process.dumpable
+
 * Thu Mar 15 2018 Remi Collet <remi@remirepo.net> - 5.6.34-2
 - add file trigger to restart the php-fpm service
   when new pool or new extension installed (F27+)
