@@ -133,7 +133,7 @@
 
 Summary: PHP scripting language for creating dynamic web sites
 Name: %{?scl_prefix}php
-Version: 5.6.35
+Version: 5.6.36
 %if 0%{?rcver:1}
 Release: 0.%{rpmrel}.%{rcver}%{?dist}
 %else
@@ -1834,6 +1834,9 @@ fi
 
 
 %changelog
+* Wed Apr 25 2018 Remi Collet <remi@remirepo.net> - 5.6.36-1
+- Update to 5.6.36 - http://www.php.net/releases/5_6_36.php
+
 * Thu Mar 29 2018 Remi Collet <remi@remirepo.net> - 5.6.35-1
 - Update to 5.6.35 - http://www.php.net/releases/5_6_35.php
 - FPM: update default pool configuration for process.dumpable
