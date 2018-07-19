@@ -133,7 +133,7 @@
 
 Summary: PHP scripting language for creating dynamic web sites
 Name: %{?scl_prefix}php
-Version: 5.6.36
+Version: 5.6.37
 %if 0%{?rcver:1}
 Release: 0.%{rpmrel}.%{rcver}%{?dist}
 %else
@@ -1834,6 +1834,9 @@ fi
 
 
 %changelog
+* Thu Jul 19 2018 Remi Collet <remi@remirepo.net> - 5.6.37-1
+- Update to 5.6.37 - http://www.php.net/releases/5_6_37.php
+
 * Wed Apr 25 2018 Remi Collet <remi@remirepo.net> - 5.6.36-1
 - Update to 5.6.36 - http://www.php.net/releases/5_6_36.php
 
