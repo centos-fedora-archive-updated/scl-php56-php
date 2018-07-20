@@ -273,6 +273,8 @@ which adds support for the PHP language to system Apache HTTP Server.
 %package cli
 Group: Development/Languages
 Summary: Command-line interface for PHP
+# sapi/cli/ps_title.c is PostgreSQL
+License: PHP and Zend and BSD and MIT and ASL 1.0 and PostgreSQL
 Requires: %{?scl_prefix}php-common%{?_isa} = %{version}-%{release}
 Provides: %{?scl_prefix}php-cgi = %{version}-%{release}, %{?scl_prefix}php-cgi%{?_isa} = %{version}-%{release}
 Provides: %{?scl_prefix}php-pcntl, %{?scl_prefix}php-pcntl%{?_isa}
