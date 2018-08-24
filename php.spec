@@ -129,7 +129,7 @@
 %endif
 
 #global rcver  RC1
-%global rpmrel 1
+%global rpmrel 2
 
 Summary: PHP scripting language for creating dynamic web sites
 Name: %{?scl_prefix}php
@@ -175,6 +175,7 @@ Patch6: php-5.6.3-embed.patch
 Patch7: php-5.3.0-recode.patch
 Patch8: php-5.6.17-libdb.patch
 Patch9: php-5.5.30-curl.patch
+Patch10: php-5.6.37-icu62.patch
 
 # Functional changes
 Patch40: php-5.4.0-dlopen.patch
@@ -894,6 +895,9 @@ support for using the enchant library to PHP.
 %patch8 -p1 -b .libdb
 %if 0%{?rhel}
 %patch9 -p1 -b .curltls
+%endif
+%if 0%{?fedora} >= 29
+%patch10 -p1 -b .icu62
 %endif
 
 %patch40 -p1 -b .dlopen
@@ -1836,6 +1840,9 @@ fi
 
 
 %changelog
+* Thu Aug 23 2018 Remi Collet <remi@remirepo.net> - 5.6.37-2
+- F29: backport ICU 62.1 support from 7.1
+
 * Thu Jul 19 2018 Remi Collet <remi@remirepo.net> - 5.6.37-1
 - Update to 5.6.37 - http://www.php.net/releases/5_6_37.php
 
