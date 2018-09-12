@@ -129,11 +129,11 @@
 %endif
 
 #global rcver  RC1
-%global rpmrel 2
+%global rpmrel 1
 
 Summary: PHP scripting language for creating dynamic web sites
 Name: %{?scl_prefix}php
-Version: 5.6.37
+Version: 5.6.38
 %if 0%{?rcver:1}
 Release: 0.%{rpmrel}.%{rcver}%{?dist}
 %else
@@ -1840,6 +1840,9 @@ fi
 
 
 %changelog
+* Wed Sep 12 2018 Remi Collet <remi@remirepo.net> - 5.6.38-1
+- Update to 5.6.38 - http://www.php.net/releases/5_6_38.php
+
 * Thu Aug 23 2018 Remi Collet <remi@remirepo.net> - 5.6.37-2
 - F29: backport ICU 62.1 support from 7.1
 
