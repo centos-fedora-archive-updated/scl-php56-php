@@ -128,17 +128,10 @@
 %global db_devel  libdb-devel
 %endif
 
-#global rcver  RC1
-%global rpmrel 2
-
 Summary: PHP scripting language for creating dynamic web sites
 Name: %{?scl_prefix}php
-Version: 5.6.38
-%if 0%{?rcver:1}
-Release: 0.%{rpmrel}.%{rcver}%{?dist}
-%else
-Release: %{rpmrel}%{?dist}
-%endif
+Version: 5.6.39
+Release: 1%{?dist}
 # All files licensed under PHP version 3.01, except
 # Zend is licensed under Zend
 # TSRM is licensed under BSD
@@ -1840,6 +1833,9 @@ fi
 
 
 %changelog
+* Wed Dec  5 2018 Remi Collet <remi@remirepo.net> - 5.6.39-1
+- Update to 5.6.39 - http://www.php.net/releases/5_6_39.php
+
 * Wed Oct 24 2018 Remi Collet <remi@remirepo.net> - 5.6.38-2
 - use oracle client library version 18.3
 
