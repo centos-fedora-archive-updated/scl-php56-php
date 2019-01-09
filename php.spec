@@ -130,7 +130,7 @@
 
 Summary: PHP scripting language for creating dynamic web sites
 Name: %{?scl_prefix}php
-Version: 5.6.39
+Version: 5.6.40
 Release: 1%{?dist}
 # All files licensed under PHP version 3.01, except
 # Zend is licensed under Zend
@@ -1833,6 +1833,9 @@ fi
 
 
 %changelog
+* Wed Jan  9 2019 Remi Collet <remi@remirepo.net> - 5.6.40-1
+- Update to 5.6.40 - http://www.php.net/releases/5_6_40.php
+
 * Wed Dec  5 2018 Remi Collet <remi@remirepo.net> - 5.6.39-1
 - Update to 5.6.39 - http://www.php.net/releases/5_6_39.php
 
