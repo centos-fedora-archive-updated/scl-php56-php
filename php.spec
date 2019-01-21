@@ -79,7 +79,12 @@
 %global with_oci8     %{?_with_oci8:1}%{!?_with_oci8:0}
 
 %global with_imap      1
+# until firebird available in EPEL
+%if 0%{?rhel} == 8
+%global with_interbase 0
+%else
 %global with_interbase 1
+%endif
 %global with_mcrypt    1
 %global with_freetds   1
 %global with_tidy      1
@@ -114,7 +119,7 @@
 %global with_systemd 0
 %endif
 # httpd 2.4.10 with httpd-filesystem and sethandler support
-%if 0%{?fedora} >= 21
+%if 0%{?fedora} >= 21 || 0%{?rhel} >= 8
 %global with_httpd2410 1
 %else
 %global with_httpd2410 0
@@ -131,7 +136,7 @@
 Summary: PHP scripting language for creating dynamic web sites
 Name: %{?scl_prefix}php
 Version: 5.6.40
-Release: 1%{?dist}
+Release: 2%{?dist}
 # All files licensed under PHP version 3.01, except
 # Zend is licensed under Zend
 # TSRM is licensed under BSD
@@ -240,7 +245,7 @@ Requires(pre): httpd-filesystem
 %else
 Requires(pre): httpd
 %endif
-%if 0%{?fedora} >= 27
+%if 0%{?fedora} >= 27 || 0%{?rhel} >= 8
 # httpd have threaded MPM by default
 Recommends: %{?scl_prefix}php-fpm%{?_isa} = %{version}-%{release}
 %endif
@@ -879,7 +884,7 @@ support for using the enchant library to PHP.
 
 %patch1 -p1 -b .mpmcheck
 %patch2 -p1 -b .fb_config
-%if 0%{?fedora} >= 26
+%if 0%{?fedora} >= 26 || 0%{?rhel} >= 8
 %patch3 -p1 -b .openssl11
 %endif
 %patch5 -p1 -b .includedir
@@ -889,7 +894,7 @@ support for using the enchant library to PHP.
 %if 0%{?rhel}
 %patch9 -p1 -b .curltls
 %endif
-%if 0%{?fedora} >= 29
+%if 0%{?fedora} >= 29 || 0%{?rhel} >= 8
 %patch10 -p1 -b .icu62
 %endif
 
@@ -915,10 +920,10 @@ support for using the enchant library to PHP.
 # Fixes for tests
 %patch300 -p1 -b .datetests
 %if %{with_libpcre}
-%if 0%{?fedora} < 21
+if ! pkg-config libpcre --atleast-version 8.34 ; then
 # Only apply when system libpcre < 8.34
 %patch301 -p1 -b .pcre834
-%endif
+fi
 %endif
 
 # WIP patch
@@ -1030,7 +1035,7 @@ sed -e "s/@PHP_APIVER@/%{apiver}%{isasuffix}/" \
  -e "s:@BINDIR@:%{_bindir}:" \
  -e "s:@SCL@:%{?scl:%{scl}_}:" \
  %{SOURCE3} | tee macros.php
-%if 0%{?fedora} >= 24
+%if 0%{?fedora} >= 24 || 0%{?rhel} >= 8
 echo '%%%{?scl:%{scl}_}pecl_xmldir  %{_localstatedir}/lib/php/peclxml' | tee -a macros.php
 %endif
 
@@ -1356,7 +1361,7 @@ install -m 755 -d $RPM_BUILD_ROOT%{_sysconfdir}/php.d
 install -m 755 -d $RPM_BUILD_ROOT%{_localstatedir}/lib/php
 install -m 700 -d $RPM_BUILD_ROOT%{_localstatedir}/lib/php/session
 install -m 700 -d $RPM_BUILD_ROOT%{_localstatedir}/lib/php/wsdlcache
-%if 0%{?fedora} >= 24
+%if 0%{?fedora} >= 24 || 0%{?rhel} >= 8
 install -m 755 -d $RPM_BUILD_ROOT%{_localstatedir}/lib/php/peclxml
 install -m 755 -d $RPM_BUILD_ROOT%{_docdir}/pecl
 install -m 755 -d $RPM_BUILD_ROOT%{_datadir}/tests/pecl
@@ -1388,7 +1393,7 @@ mv $RPM_BUILD_ROOT%{_sysconfdir}/php-fpm.conf.default .
 # install systemd unit files and scripts for handling server startup
 %if %{with_systemd}
 install -Dm 644 %{SOURCE6}  $RPM_BUILD_ROOT%{_unitdir}/%{?scl_prefix}php-fpm.service
-%if 0%{?fedora} >= 27
+%if 0%{?fedora} >= 27 || 0%{?rhel} >= 8
 install -Dm 644 %{SOURCE12} $RPM_BUILD_ROOT%{_unitdir}/httpd.service.d/%{?scl_prefix}php-fpm.conf
 install -Dm 644 %{SOURCE12} $RPM_BUILD_ROOT%{_unitdir}/nginx.service.d/%{?scl_prefix}php-fpm.conf
 %endif
@@ -1431,7 +1436,7 @@ sed -e 's:/run:%{_localstatedir}/run:' \
     -i $RPM_BUILD_ROOT%{_root_sysconfdir}/logrotate.d/%{?scl_prefix}php-fpm
 
 # Environment file
-%if 0%{?fedora} >= 26
+%if 0%{?fedora} >= 26 || 0%{?rhel} >= 8
 sed -e '/EnvironmentFile/d' -i $RPM_BUILD_ROOT%{_unitdir}/%{?scl_prefix}php-fpm.service
 %else
 install -m 755 -d $RPM_BUILD_ROOT%{_sysconfdir}/sysconfig
@@ -1692,7 +1697,7 @@ fi
 %dir %{_libdir}/php/modules
 %dir %{_localstatedir}/lib/php
 %dir %{_datadir}/php
-%if 0%{?fedora} >= 24
+%if 0%{?fedora} >= 24 || 0%{?rhel} >= 8
 %dir %{_localstatedir}/lib/php/peclxml
 %dir %{_docdir}/pecl
 %dir %{_datadir}/tests
@@ -1737,13 +1742,13 @@ fi
 %config(noreplace) %{_sysconfdir}/php-fpm.conf
 %config(noreplace) %{_sysconfdir}/php-fpm.d/www.conf
 %config(noreplace) %{_root_sysconfdir}/logrotate.d/%{?scl_prefix}php-fpm
-%if 0%{?fedora} < 26
+%if 0%{?fedora} < 26 && 0%{?rhel} < 8
 %config(noreplace) %{_sysconfdir}/sysconfig/php-fpm
 %endif
 # {_prefix}/lib/tmpfiles.d/php-fpm.conf
 %if %{with_systemd}
 %{_unitdir}/%{?scl_prefix}php-fpm.service
-%if 0%{?fedora} >= 27
+%if 0%{?fedora} >= 27 || 0%{?rhel} >= 8
 %{_unitdir}/httpd.service.d/%{?scl_prefix}php-fpm.conf
 %{_unitdir}/nginx.service.d/%{?scl_prefix}php-fpm.conf
 %endif
@@ -1833,6 +1838,9 @@ fi
 
 
 %changelog
+* Mon Jan 21 2019 Remi Collet <remi@remirepo.net> - 5.6.40-2
+- cleanup for EL-8
+
 * Wed Jan  9 2019 Remi Collet <remi@remirepo.net> - 5.6.40-1
 - Update to 5.6.40 - http://www.php.net/releases/5_6_40.php
 
