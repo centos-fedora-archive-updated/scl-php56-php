@@ -136,7 +136,7 @@
 Summary: PHP scripting language for creating dynamic web sites
 Name: %{?scl_prefix}php
 Version: 5.6.40
-Release: 2%{?dist}
+Release: 3%{?dist}
 # All files licensed under PHP version 3.01, except
 # Zend is licensed under Zend
 # TSRM is licensed under BSD
@@ -195,6 +195,8 @@ Patch91: php-5.6.3-oci8conf.patch
 Patch100: php-5.6.31-oci.patch
 
 # Security fixes (200+)
+Patch210: php-bug77540.patch
+Patch211: php-bug77563.patch
 
 # Fixes for tests (300+)
 # Factory is droped from system tzdata
@@ -916,6 +918,8 @@ support for using the enchant library to PHP.
 %patch100 -p1 -b .pdo_oci
 
 # security patches
+%patch210 -p1 -b .bug77540
+%patch211 -p1 -b .bug77563
 
 # Fixes for tests
 %patch300 -p1 -b .datetests
@@ -1667,6 +1671,23 @@ fi
 %endif
 
 
+%posttrans common
+cat << EOF
+=====================================================================
+
+ WARNING : PHP 5.6 have reached its "End of Life" in January 2019.
+ Even, if this package includes some of the important security fix,
+ backported from 7.1,
+ The UPGRADE to a maintained version is very strongly RECOMMENDED.
+
+%if %{?fedora}%{!?fedora:99} < 28
+ WARNING : Fedora %{fedora} is now EOL :
+ You should consider upgrading to a supported release
+%endif
+=====================================================================
+EOF
+
+
 %{!?_licensedir:%global license %%doc}
 
 %files
@@ -1838,6 +1859,13 @@ fi
 
 
 %changelog
+* Mon Mar  4 2019 Remi Collet <remi@remirepo.net> - 5.6.40-3
+- exif:
+  Fix #77509 Uninitialized read in exif_process_IFD_in_TIFF
+  Fix #77540 Invalid Read on exif_process_SOFn
+  Fix #77563 Uninitialized read in exif_process_IFD_in_MAKERNOTE
+  Fix #77659 Uninitialized read in exif_process_IFD_in_MAKERNOTE
+
 * Mon Jan 21 2019 Remi Collet <remi@remirepo.net> - 5.6.40-2
 - cleanup for EL-8
 
