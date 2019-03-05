@@ -1,13 +1,14 @@
-===== 5.6.40 (2019-01-10)
+===== 5.6.40-4 (2019-03-05)
 
 $ grep -r 'Tests failed' /var/lib/mock/scl56*/build.log
 
 /var/lib/mock/scl56el6x/build.log:Tests failed    :     7
 /var/lib/mock/scl56el7x/build.log:Tests failed    :     4
+/var/lib/mock/scl56el7x/build.log:Tests failed    :    34
 /var/lib/mock/scl56fc26x/build.log:Tests failed    :    3
 /var/lib/mock/scl56fc27x/build.log:Tests failed    :    7
-/var/lib/mock/scl56fc28x/build.log:Tests failed    :    4
-/var/lib/mock/scl56fc29x/build.log:Tests failed    :    6
+/var/lib/mock/scl56fc28x/build.log:Tests failed    :    6
+/var/lib/mock/scl56fc29x/build.log:Tests failed    :    8
 
 
 el6x, el7x:
@@ -23,6 +24,9 @@ el6x, fc25x, fc27x:
 	3	getmxrr() test [ext/standard/tests/network/getmxrr.phpt]
 fc27x, fc28x, fc29x:
 	2	substr_compare() [ext/standard/tests/strings/substr_compare.phpt]
+fc28x, fc29x:
+		Bug #33414 [1] (Comprehensive list of incorrect days returned after strotime() / date() tests) [ext/date/tests/bug33414-1.phpt]
+		date_modify() function [1] [ext/date/tests/date_modify-1.phpt]
 fc29x:
 		openssl_error_string() tests [ext/openssl/tests/openssl_error_string_basic.phpt]
 		TLS server rate-limits client-initiated renegotiation [ext/openssl/tests/stream_server_reneg_limit.phpt]
