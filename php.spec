@@ -136,7 +136,7 @@
 Summary: PHP scripting language for creating dynamic web sites
 Name: %{?scl_prefix}php
 Version: 5.6.40
-Release: 3%{?dist}
+Release: 4%{?dist}
 # All files licensed under PHP version 3.01, except
 # Zend is licensed under Zend
 # TSRM is licensed under BSD
@@ -197,6 +197,7 @@ Patch100: php-5.6.31-oci.patch
 # Security fixes (200+)
 Patch210: php-bug77540.patch
 Patch211: php-bug77563.patch
+Patch213: php-bug77630.patch
 
 # Fixes for tests (300+)
 # Factory is droped from system tzdata
@@ -920,6 +921,7 @@ support for using the enchant library to PHP.
 # security patches
 %patch210 -p1 -b .bug77540
 %patch211 -p1 -b .bug77563
+%patch213 -p1 -b .bug77630
 
 # Fixes for tests
 %patch300 -p1 -b .datetests
@@ -1859,6 +1861,10 @@ EOF
 
 
 %changelog
+* Tue Mar  5 2019 Remi Collet <remi@remirepo.net> - 5.6.40-4
+- Fix #77630 rename() across the device may allow unwanted access
+  during processing
+
 * Mon Mar  4 2019 Remi Collet <remi@remirepo.net> - 5.6.40-3
 - exif:
   Fix #77509 Uninitialized read in exif_process_IFD_in_TIFF
