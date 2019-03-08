@@ -1677,14 +1677,14 @@ fi
 cat << EOF
 =====================================================================
 
- WARNING : PHP 5.6 have reached its "End of Life" in January 2019.
- Even, if this package includes some of the important security fix,
- backported from 7.1,
- The UPGRADE to a maintained version is very strongly RECOMMENDED.
+  WARNING : PHP 5.6 have reached its "End of Life" in
+  January 2019. Even, if this package includes some of
+  the important security fix, backported from 7.1, the
+  UPGRADE to a maintained version is very strongly RECOMMENDED.
 
 %if %{?fedora}%{!?fedora:99} < 28
- WARNING : Fedora %{fedora} is now EOL :
- You should consider upgrading to a supported release
+  WARNING : Fedora %{fedora} is now EOL :
+  You should consider upgrading to a supported release
 %endif
 =====================================================================
 EOF
