@@ -1,4 +1,4 @@
-===== 5.6.40-4 (2019-03-05)
+===== 5.6.40-5 (2019-03-12)
 
 $ grep -r 'Tests failed' /var/lib/mock/scl56*/build.log
 
@@ -9,7 +9,7 @@ $ grep -r 'Tests failed' /var/lib/mock/scl56*/build.log
 /var/lib/mock/scl56fc27x/build.log:Tests failed    :    7
 /var/lib/mock/scl56fc28x/build.log:Tests failed    :    6
 /var/lib/mock/scl56fc29x/build.log:Tests failed    :    8
-/var/lib/mock/scl56fc30x/build.log:Tests failed    :    8
+/var/lib/mock/scl56fc30x/build.log:Tests failed    :   11
 
 
 el6x, el7x:
@@ -19,7 +19,7 @@ el6x, el7x, fc25x, fc26x, fc27x, fc28x, fc29x, fc30x:
 el6xn el7x, fc26x, fc27x, fc28x, fc29x, fc30x:
 	4	Bug #51819 (Case discrepancy in timezone names cause Uncaught exception and fatal error) [ext/date/tests/bug51819.phpt]
 	4	Test date_sunset() function : usage variation - Passing high positive and negative float values to time argument. [ext/date/tests/date_sunset_variation9.phpt]
-el6x, fc25x, fc27x:
+el6x, fc25x, fc27x, fc29x:
 	3	Bug #65538: SSL context "cafile" disallows URL stream wrappers [ext/openssl/tests/bug65538_002.phpt]
 	3	gethostbyname() function - basic return valid ip address test [ext/standard/tests/network/gethostbyname_error004.phpt]
 	3	getmxrr() test [ext/standard/tests/network/getmxrr.phpt]

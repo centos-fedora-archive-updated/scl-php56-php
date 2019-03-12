@@ -1,15 +1,12 @@
-Backported for 5.6 from 7.1 by remi
-without binary diff
-
-
-
-From 8ac6fee8562533a15db90062117210ed28b44fea Mon Sep 17 00:00:00 2001
+From ac4a9cd56f8145c0b1226fe977772a40e3a994a9 Mon Sep 17 00:00:00 2001
 From: Stanislav Malyshev <stas@php.net>
 Date: Sat, 2 Mar 2019 15:07:40 -0800
 Subject: [PATCH] Fix bug #77563 - Uninitialized read in
  exif_process_IFD_in_MAKERNOTE
 
 Also fix for bug #77659
+
+(cherry picked from commit 8ac6fee8562533a15db90062117210ed28b44fea)
 ---
  ext/exif/exif.c              |   3 ++-
  ext/exif/tests/bug77563.jpg  | Bin 0 -> 63 bytes
@@ -19,7 +16,7 @@ Also fix for bug #77659
  create mode 100644 ext/exif/tests/bug77563.phpt
 
 diff --git a/ext/exif/exif.c b/ext/exif/exif.c
-index ea88a8f115e8..fe89b8547118 100644
+index 5497068fb1..ce8db170c7 100644
 --- a/ext/exif/exif.c
 +++ b/ext/exif/exif.c
 @@ -2751,7 +2751,7 @@ static int exif_process_IFD_in_MAKERNOTE(image_info_type *ImageInfo, char * valu

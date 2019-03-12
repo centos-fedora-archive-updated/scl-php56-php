@@ -136,7 +136,7 @@
 Summary: PHP scripting language for creating dynamic web sites
 Name: %{?scl_prefix}php
 Version: 5.6.40
-Release: 4%{?dist}
+Release: 5%{?dist}
 # All files licensed under PHP version 3.01, except
 # Zend is licensed under Zend
 # TSRM is licensed under BSD
@@ -195,9 +195,15 @@ Patch91: php-5.6.3-oci8conf.patch
 Patch100: php-5.6.31-oci.patch
 
 # Security fixes (200+)
+# See https://github.com/Microsoft/php-src/commits/PHP-5.6-security-backports
+Patch208: php-bug77396.patch
+Patch209: php-bug77431.patch
 Patch210: php-bug77540.patch
 Patch211: php-bug77563.patch
+Patch212: php-bug77586.patch
 Patch213: php-bug77630.patch
+# update NEWS file with backport information
+Patch299: php-news.patch
 
 # Fixes for tests (300+)
 # Factory is droped from system tzdata
@@ -919,9 +925,13 @@ support for using the enchant library to PHP.
 %patch100 -p1 -b .pdo_oci
 
 # security patches
+%patch208 -p1 -b .bug77396
+%patch209 -p1 -b .bug77431
 %patch210 -p1 -b .bug77540
 %patch211 -p1 -b .bug77563
+%patch212 -p1 -b .bug77586
 %patch213 -p1 -b .bug77630
+%patch299 -p1 -b .backport
 
 # Fixes for tests
 %patch300 -p1 -b .datetests
@@ -1861,6 +1871,14 @@ EOF
 
 
 %changelog
+* Tue Mar 12 2019 Remi Collet <remi@remirepo.net> - 5.6.40-5
+- phar:
+  Fix #77396 Null Pointer Dereference in phar_create_or_parse_filename
+  Fix #77586 - phar_tar_writeheaders_int() buffer overflow
+- spl:
+  Fix #77431 openFile() silently truncates after a null byte
+- security fix synced with https://github.com/Microsoft/php-src/
+
 * Tue Mar  5 2019 Remi Collet <remi@remirepo.net> - 5.6.40-4
 - Fix #77630 rename() across the device may allow unwanted access
   during processing
