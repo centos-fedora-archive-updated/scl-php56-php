@@ -1882,13 +1882,18 @@ EOF
 * Tue Mar  5 2019 Remi Collet <remi@remirepo.net> - 5.6.40-4
 - Fix #77630 rename() across the device may allow unwanted access
   during processing
+  CVE-2019-9637
 
 * Mon Mar  4 2019 Remi Collet <remi@remirepo.net> - 5.6.40-3
 - exif:
   Fix #77509 Uninitialized read in exif_process_IFD_in_TIFF
+  CVE-2019-9641
   Fix #77540 Invalid Read on exif_process_SOFn
+  CVE-2019-9640
   Fix #77563 Uninitialized read in exif_process_IFD_in_MAKERNOTE
+  CVE-2019-9638
   Fix #77659 Uninitialized read in exif_process_IFD_in_MAKERNOTE
+  CVE-2019-9639
 
 * Mon Jan 21 2019 Remi Collet <remi@remirepo.net> - 5.6.40-2
 - cleanup for EL-8
