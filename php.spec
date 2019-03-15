@@ -136,7 +136,7 @@
 Summary: PHP scripting language for creating dynamic web sites
 Name: %{?scl_prefix}php
 Version: 5.6.40
-Release: 5%{?dist}
+Release: 6%{?dist}
 # All files licensed under PHP version 3.01, except
 # Zend is licensed under Zend
 # TSRM is licensed under BSD
@@ -193,6 +193,7 @@ Patch91: php-5.6.3-oci8conf.patch
 
 # Upstream fixes (100+)
 Patch100: php-5.6.31-oci.patch
+Patch103: php-bug76846.patch
 
 # Security fixes (200+)
 # See https://github.com/Microsoft/php-src/commits/PHP-5.6-security-backports
@@ -909,7 +910,7 @@ support for using the enchant library to PHP.
 
 %patch40 -p1 -b .dlopen
 %patch41 -p1 -b .dtrace
-%if 0%{?fedora} >= 25 || 0%{?rhel} >= 6
+%if 0%{?fedora} >= 28 || 0%{?rhel} >= 6
 %patch42 -p1 -b .systzdata
 %endif
 %patch43 -p1 -b .headers
@@ -923,6 +924,7 @@ support for using the enchant library to PHP.
 
 # upstream patches
 %patch100 -p1 -b .pdo_oci
+%patch103 -p1 -b .bug76846
 
 # security patches
 %patch208 -p1 -b .bug77396
@@ -973,6 +975,12 @@ mkdir \
 rm ext/date/tests/timezone_location_get.phpt
 rm ext/date/tests/timezone_version_get.phpt
 rm ext/date/tests/timezone_version_get_basic1.phpt
+rm ext/date/tests/bug33414-1.phpt
+rm ext/date/tests/bug33414-2.phpt
+rm ext/date/tests/bug33415-2.phpt
+rm ext/date/tests/date_modify-1.phpt
+rm ext/date/tests/bug51819.phpt
+rm ext/date/tests/date_sunset_variation9.phpt
 # Should be skipped but fails sometime
 rm ext/standard/tests/file/file_get_contents_error001.phpt
 # fails sometime
@@ -1132,7 +1140,7 @@ ln -sf ../configure
     --with-layout=GNU \
     --with-kerberos \
     --with-libxml-dir=%{_root_prefix} \
-%if 0%{?fedora} >= 25 || 0%{?rhel} >= 6
+%if 0%{?fedora} >= 28 || 0%{?rhel} >= 6
     --with-system-tzdata \
 %endif
     --with-mhash \
@@ -1871,6 +1879,9 @@ EOF
 
 
 %changelog
+* Fri Mar 15 2019 Remi Collet <remi@remirepo.net> - 5.6.40-6
+- Fix #76846 Segfault in shutdown function after memory limit error
+
 * Tue Mar 12 2019 Remi Collet <remi@remirepo.net> - 5.6.40-5
 - phar:
   Fix #77396 Null Pointer Dereference in phar_create_or_parse_filename
