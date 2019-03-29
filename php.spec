@@ -428,9 +428,15 @@ Requires: automake
 Requires: gcc
 Requires: gcc-c++
 Requires: libtool
+# see "php-config --libs"
+Requires: krb5-devel%{?_isa}
+Requires: libedit-devel%{?_isa}
+Requires: libxml2-devel%{?_isa}
+Requires: openssl-devel%{?_isa}
 %if %{with_libpcre}
 Requires: pcre-devel%{?_isa} >= 8.20
 %endif
+Requires: zlib-devel%{?_isa}
 %if ! %{php_bootstrap}
 Requires: %{?scl_prefix}php-pecl-jsonc-devel%{?_isa}
 %endif
