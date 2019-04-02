@@ -136,7 +136,7 @@
 Summary: PHP scripting language for creating dynamic web sites
 Name: %{?scl_prefix}php
 Version: 5.6.40
-Release: 6%{?dist}
+Release: 7%{?dist}
 # All files licensed under PHP version 3.01, except
 # Zend is licensed under Zend
 # TSRM is licensed under BSD
@@ -203,8 +203,11 @@ Patch210: php-bug77540.patch
 Patch211: php-bug77563.patch
 Patch212: php-bug77586.patch
 Patch213: php-bug77630.patch
-# update NEWS file with backport information
-Patch299: php-news.patch
+Patch214: php-news.patch
+Patch215: php-sqlite3-defensive.patch
+Patch216: php-bug77753.patch
+Patch217: php-bug77831.patch
+
 
 # Fixes for tests (300+)
 # Factory is droped from system tzdata
@@ -939,7 +942,10 @@ support for using the enchant library to PHP.
 %patch211 -p1 -b .bug77563
 %patch212 -p1 -b .bug77586
 %patch213 -p1 -b .bug77630
-%patch299 -p1 -b .backport
+%patch214 -p1 -b .backport
+%patch215 -p1 -b .sqlite3.defensive
+%patch216 -p1 -b .bug77753
+%patch217 -p1 -b .bug77831
 
 # Fixes for tests
 %patch300 -p1 -b .datetests
@@ -1885,6 +1891,13 @@ EOF
 
 
 %changelog
+* Tue Apr  2 2019 Remi Collet <remi@remirepo.net> - 5.6.40-7
+- exif:
+  Fix #77753 Heap-buffer-overflow in php_ifd_get32s
+  Fix #77831 Heap-buffer-overflow in exif_iif_add_value
+- sqlite3:
+  Added sqlite3.defensive INI directive
+
 * Fri Mar 15 2019 Remi Collet <remi@remirepo.net> - 5.6.40-6
 - Fix #76846 Segfault in shutdown function after memory limit error
 
