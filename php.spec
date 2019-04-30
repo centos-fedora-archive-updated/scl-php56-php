@@ -136,7 +136,7 @@
 Summary: PHP scripting language for creating dynamic web sites
 Name: %{?scl_prefix}php
 Version: 5.6.40
-Release: 7%{?dist}
+Release: 8%{?dist}
 # All files licensed under PHP version 3.01, except
 # Zend is licensed under Zend
 # TSRM is licensed under BSD
@@ -207,6 +207,7 @@ Patch214: php-news.patch
 Patch215: php-sqlite3-defensive.patch
 Patch216: php-bug77753.patch
 Patch217: php-bug77831.patch
+Patch218: php-bug77950.patch
 
 
 # Fixes for tests (300+)
@@ -946,6 +947,7 @@ support for using the enchant library to PHP.
 %patch215 -p1 -b .sqlite3.defensive
 %patch216 -p1 -b .bug77753
 %patch217 -p1 -b .bug77831
+%patch218 -p1 -b .bug77950
 
 # Fixes for tests
 %patch300 -p1 -b .datetests
@@ -1891,10 +1893,17 @@ EOF
 
 
 %changelog
+* Tue Apr 30 2019 Remi Collet <remi@remirepo.net> - 5.6.40-8
+- exif:
+  Fix #77950 Heap-buffer-overflow in _estrndup via exif_process_IFD_TAG
+  CVE-2019-11036
+
 * Tue Apr  2 2019 Remi Collet <remi@remirepo.net> - 5.6.40-7
 - exif:
   Fix #77753 Heap-buffer-overflow in php_ifd_get32s
+  CVE-2019-11034
   Fix #77831 Heap-buffer-overflow in exif_iif_add_value
+  CVE-2019-11035
 - sqlite3:
   Added sqlite3.defensive INI directive
 
