@@ -136,7 +136,7 @@
 Summary: PHP scripting language for creating dynamic web sites
 Name: %{?scl_prefix}php
 Version: 5.6.40
-Release: 8%{?dist}
+Release: 9%{?dist}
 # All files licensed under PHP version 3.01, except
 # Zend is licensed under Zend
 # TSRM is licensed under BSD
@@ -208,6 +208,9 @@ Patch215: php-sqlite3-defensive.patch
 Patch216: php-bug77753.patch
 Patch217: php-bug77831.patch
 Patch218: php-bug77950.patch
+Patch219: php-bug78069.patch
+Patch220: php-bug77988.patch
+Patch221: php-bug77967.patch
 
 
 # Fixes for tests (300+)
@@ -948,6 +951,9 @@ support for using the enchant library to PHP.
 %patch216 -p1 -b .bug77753
 %patch217 -p1 -b .bug77831
 %patch218 -p1 -b .bug77950
+%patch219 -p1 -b .bug78069
+%patch220 -p1 -b .bug77988
+%patch221 -p1 -b .bug77967
 
 # Fixes for tests
 %patch300 -p1 -b .datetests
@@ -1893,6 +1899,16 @@ EOF
 
 
 %changelog
+* Tue May 28 2019 Remi Collet <remi@remirepo.net> - 5.6.40-9
+- iconv:
+  Fix #78069 Out-of-bounds read in iconv.c:_php_iconv_mime_decode()
+  CVE-2019-11039
+- exif:
+  Fix #77988 Heap-buffer-overflow on php_jpg_get16
+  CVE-2019-11040
+- sqlite3:
+  Fix #77967 Bypassing open_basedir restrictions via file uris
+
 * Tue Apr 30 2019 Remi Collet <remi@remirepo.net> - 5.6.40-8
 - exif:
   Fix #77950 Heap-buffer-overflow in _estrndup via exif_process_IFD_TAG
