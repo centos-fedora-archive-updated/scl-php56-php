@@ -59,7 +59,13 @@
 
 %global mysql_sock %(mysql_config --socket  2>/dev/null || echo /var/lib/mysql/mysql.sock)
 
+%if 0%{?rhel} == 6
 %global oraclever 18.3
+%global oraclelib 18.1
+%else
+%global oraclever 19.3
+%global oraclelib 19.1
+%endif
 
 # Build for LiteSpeed Web Server (LSAPI)
 %global with_lsws     1
@@ -136,7 +142,7 @@
 Summary: PHP scripting language for creating dynamic web sites
 Name: %{?scl_prefix}php
 Version: 5.6.40
-Release: 9%{?dist}
+Release: 10%{?dist}
 # All files licensed under PHP version 3.01, except
 # Zend is licensed under Zend
 # TSRM is licensed under BSD
@@ -659,7 +665,7 @@ The extension is linked with Oracle client libraries %{oraclever}
 (Oracle Instant Client).  For details, see Oracle's note
 "Oracle Client / Server Interoperability Support" (ID 207303.1).
 
-You must install libclntsh.so.%{oraclever} to use this package, provided
+You must install libclntsh.so.%{oraclelib} to use this package, provided
 in the database installation, or in the free Oracle Instant Client
 available from Oracle.
 
@@ -927,6 +933,7 @@ support for using the enchant library to PHP.
 %patch42 -p1 -b .systzdata
 %endif
 %patch43 -p1 -b .headers
+sed -e 's/php-devel/%{?scl_prefix}php-devel/' -i scripts/phpize.in
 %if 0%{?fedora} >= 18 || 0%{?rhel} >= 7
 %patch45 -p1 -b .ldap_r
 %endif
@@ -1899,6 +1906,9 @@ EOF
 
 
 %changelog
+* Mon Jun 17 2019 Remi Collet <remi@remirepo.net> - 5.6.40-10
+- use oracle client library version 19.3
+
 * Tue May 28 2019 Remi Collet <remi@remirepo.net> - 5.6.40-9
 - iconv:
   Fix #78069 Out-of-bounds read in iconv.c:_php_iconv_mime_decode()
