@@ -142,7 +142,7 @@
 Summary: PHP scripting language for creating dynamic web sites
 Name: %{?scl_prefix}php
 Version: 5.6.40
-Release: 10%{?dist}
+Release: 11%{?dist}
 # All files licensed under PHP version 3.01, except
 # Zend is licensed under Zend
 # TSRM is licensed under BSD
@@ -1906,7 +1906,7 @@ EOF
 
 
 %changelog
-* Mon Jun 17 2019 Remi Collet <remi@remirepo.net> - 5.6.40-10
+* Tue Jul  2 2019 Remi Collet <remi@remirepo.net> - 5.6.40-11
 - use oracle client library version 19.3
 
 * Tue May 28 2019 Remi Collet <remi@remirepo.net> - 5.6.40-9
