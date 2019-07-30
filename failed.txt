@@ -1,24 +1,20 @@
-===== 5.6.40-9 (2019-05-28)
+===== 5.6.40-12 (2019-07-30)
 
 $ grep -r 'Tests failed' /var/lib/mock/scl56*/build.log
 
 /var/lib/mock/scl56el6x/build.log:Tests failed    :     3
 /var/lib/mock/scl56el7x/build.log:Tests failed    :     0
 /var/lib/mock/scl56el8x/build.log:Tests failed    :    28
-/var/lib/mock/scl56fc27x/build.log:Tests failed    :    6
 /var/lib/mock/scl56fc28x/build.log:Tests failed    :    1
 /var/lib/mock/scl56fc29x/build.log:Tests failed    :    3
 /var/lib/mock/scl56fc30x/build.log:Tests failed    :    3
 
 
-fc27x:
-	4	Bug #32086 (strtotime don't work in DST) [ext/date/tests/bug32086.phpt]
-	4	Bug #33415 [1] (Possibly invalid non-one-hour DST or timezone shifts) [ext/date/tests/bug33415-1.phpt]
-el6x, fc27x:
+el6x:
 	3	Bug #65538: SSL context "cafile" disallows URL stream wrappers [ext/openssl/tests/bug65538_002.phpt]
 	3	gethostbyname() function - basic return valid ip address test [ext/standard/tests/network/gethostbyname_error004.phpt]
 	3	getmxrr() test [ext/standard/tests/network/getmxrr.phpt]
-fc27x, fc28x, fc29x, fc30x:
+fc28x, fc29x, fc30x:
 	2	substr_compare() [ext/standard/tests/strings/substr_compare.phpt]
 fc29x, fc30x:
 		openssl_error_string() tests [ext/openssl/tests/openssl_error_string_basic.phpt]

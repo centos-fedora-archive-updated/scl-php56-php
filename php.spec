@@ -142,7 +142,7 @@
 Summary: PHP scripting language for creating dynamic web sites
 Name: %{?scl_prefix}php
 Version: 5.6.40
-Release: 11%{?dist}
+Release: 12%{?dist}
 # All files licensed under PHP version 3.01, except
 # Zend is licensed under Zend
 # TSRM is licensed under BSD
@@ -217,6 +217,9 @@ Patch218: php-bug77950.patch
 Patch219: php-bug78069.patch
 Patch220: php-bug77988.patch
 Patch221: php-bug77967.patch
+Patch222: php-bug78222.patch
+Patch223: php-bug78256.patch
+Patch224: php-bug77919.patch
 
 
 # Fixes for tests (300+)
@@ -961,6 +964,9 @@ sed -e 's/php-devel/%{?scl_prefix}php-devel/' -i scripts/phpize.in
 %patch219 -p1 -b .bug78069
 %patch220 -p1 -b .bug77988
 %patch221 -p1 -b .bug77967
+%patch222 -p1 -b .bug78222
+%patch223 -p1 -b .bug78256
+%patch224 -p1 -b .bug77919
 
 # Fixes for tests
 %patch300 -p1 -b .datetests
@@ -1906,6 +1912,15 @@ EOF
 
 
 %changelog
+* Tue Jul 30 2019 Remi Collet <remi@remirepo.net> - 5.6.40-12
+- exif:
+  Fix #78256 heap-buffer-overflow on exif_process_user_comment
+  CVE-2019-11042
+  Fix #78222 heap-buffer-overflow on exif_scan_thumbnail
+  CVE-2019-11041
+- phar:
+  Fix #77919 Potential UAF in Phar RSHUTDOWN
+
 * Tue Jul  2 2019 Remi Collet <remi@remirepo.net> - 5.6.40-11
 - use oracle client library version 19.3
 
