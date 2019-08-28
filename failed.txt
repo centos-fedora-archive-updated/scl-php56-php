@@ -1,22 +1,23 @@
-===== 5.6.40-12 (2019-07-30)
+===== 5.6.40-13 (2019-08-28)
 
 $ grep -r 'Tests failed' /var/lib/mock/scl56*/build.log
 
 /var/lib/mock/scl56el6x/build.log:Tests failed    :     3
-/var/lib/mock/scl56el7x/build.log:Tests failed    :     0
+/var/lib/mock/scl56el7x/build.log:Tests failed    :     1
 /var/lib/mock/scl56el8x/build.log:Tests failed    :    28
-/var/lib/mock/scl56fc28x/build.log:Tests failed    :    1
 /var/lib/mock/scl56fc29x/build.log:Tests failed    :    3
 /var/lib/mock/scl56fc30x/build.log:Tests failed    :    3
+/var/lib/mock/scl56fc31x/build.log:Tests failed    :    3
 
 
 el6x:
 	3	Bug #65538: SSL context "cafile" disallows URL stream wrappers [ext/openssl/tests/bug65538_002.phpt]
 	3	gethostbyname() function - basic return valid ip address test [ext/standard/tests/network/gethostbyname_error004.phpt]
 	3	getmxrr() test [ext/standard/tests/network/getmxrr.phpt]
-fc28x, fc29x, fc30x:
+el7x:
+	2	Bug #75457 (heap-use-after-free in php7.0.25) [ext/pcre/tests/bug75457.phpt]
+fc29x, fc30x, fc31x:
 	2	substr_compare() [ext/standard/tests/strings/substr_compare.phpt]
-fc29x, fc30x:
 		openssl_error_string() tests [ext/openssl/tests/openssl_error_string_basic.phpt]
 		TLS server rate-limits client-initiated renegotiation [ext/openssl/tests/stream_server_reneg_limit.phpt]
 

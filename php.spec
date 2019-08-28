@@ -142,7 +142,7 @@
 Summary: PHP scripting language for creating dynamic web sites
 Name: %{?scl_prefix}php
 Version: 5.6.40
-Release: 12%{?dist}
+Release: 13%{?dist}
 # All files licensed under PHP version 3.01, except
 # Zend is licensed under Zend
 # TSRM is licensed under BSD
@@ -220,6 +220,8 @@ Patch221: php-bug77967.patch
 Patch222: php-bug78222.patch
 Patch223: php-bug78256.patch
 Patch224: php-bug77919.patch
+Patch225: php-bug75457.patch
+Patch226: php-bug78380.patch
 
 
 # Fixes for tests (300+)
@@ -967,6 +969,8 @@ sed -e 's/php-devel/%{?scl_prefix}php-devel/' -i scripts/phpize.in
 %patch222 -p1 -b .bug78222
 %patch223 -p1 -b .bug78256
 %patch224 -p1 -b .bug77919
+%patch225 -p1 -b .bug75457
+%patch226 -p1 -b .bug78380
 
 # Fixes for tests
 %patch300 -p1 -b .datetests
@@ -1912,6 +1916,12 @@ EOF
 
 
 %changelog
+* Wed Aug 28 2019 Remi Collet <remi@remirepo.net> - 5.6.40-13
+- mbstring:
+  Fix CVE-2019-13224 don't allow different encodings for onig_new_deluxe
+- pcre:
+  Fix #75457 heap use-after-free in pcrelib
+
 * Tue Jul 30 2019 Remi Collet <remi@remirepo.net> - 5.6.40-12
 - exif:
   Fix #78256 heap-buffer-overflow on exif_process_user_comment
