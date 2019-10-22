@@ -1,9 +1,9 @@
-===== 5.6.40-13 (2019-08-28)
+===== 5.6.40-14 (2019-09-22)
 
 $ grep -r 'Tests failed' /var/lib/mock/scl56*/build.log
 
 /var/lib/mock/scl56el6x/build.log:Tests failed    :     3
-/var/lib/mock/scl56el7x/build.log:Tests failed    :     1
+/var/lib/mock/scl56el7x/build.log:Tests failed    :     2
 /var/lib/mock/scl56el8x/build.log:Tests failed    :    28
 /var/lib/mock/scl56fc29x/build.log:Tests failed    :    3
 /var/lib/mock/scl56fc30x/build.log:Tests failed    :    3
@@ -16,9 +16,10 @@ el6x:
 	3	getmxrr() test [ext/standard/tests/network/getmxrr.phpt]
 el7x:
 	2	Bug #75457 (heap-use-after-free in php7.0.25) [ext/pcre/tests/bug75457.phpt]
+el7x, fc29x, fc30x, fc31x:
+		openssl_error_string() tests [ext/openssl/tests/openssl_error_string_basic.phpt]
 fc29x, fc30x, fc31x:
 	2	substr_compare() [ext/standard/tests/strings/substr_compare.phpt]
-		openssl_error_string() tests [ext/openssl/tests/openssl_error_string_basic.phpt]
 		TLS server rate-limits client-initiated renegotiation [ext/openssl/tests/stream_server_reneg_limit.phpt]
 
 

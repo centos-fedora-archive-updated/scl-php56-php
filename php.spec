@@ -142,7 +142,7 @@
 Summary: PHP scripting language for creating dynamic web sites
 Name: %{?scl_prefix}php
 Version: 5.6.40
-Release: 13%{?dist}
+Release: 14%{?dist}
 # All files licensed under PHP version 3.01, except
 # Zend is licensed under Zend
 # TSRM is licensed under BSD
@@ -222,7 +222,7 @@ Patch223: php-bug78256.patch
 Patch224: php-bug77919.patch
 Patch225: php-bug75457.patch
 Patch226: php-bug78380.patch
-
+Patch227: php-bug78599.patch
 
 # Fixes for tests (300+)
 # Factory is droped from system tzdata
@@ -971,6 +971,7 @@ sed -e 's/php-devel/%{?scl_prefix}php-devel/' -i scripts/phpize.in
 %patch224 -p1 -b .bug77919
 %patch225 -p1 -b .bug75457
 %patch226 -p1 -b .bug78380
+%patch227 -p1 -b .bug78599
 
 # Fixes for tests
 %patch300 -p1 -b .datetests
@@ -1916,6 +1917,10 @@ EOF
 
 
 %changelog
+* Tue Oct 22 2019 Remi Collet <remi@remirepo.net> - 5.6.40-14
+- FPM:
+  Fix CVE-2019-11043 env_path_info underflow in fpm_main.c
+
 * Wed Aug 28 2019 Remi Collet <remi@remirepo.net> - 5.6.40-13
 - mbstring:
   Fix CVE-2019-13224 don't allow different encodings for onig_new_deluxe
