@@ -60,10 +60,14 @@
 %global mysql_sock %(mysql_config --socket  2>/dev/null || echo /var/lib/mysql/mysql.sock)
 
 %if 0%{?rhel} == 6
+%ifarch x86_64
+%global oraclever 18.5
+%else
 %global oraclever 18.3
+%endif
 %global oraclelib 18.1
 %else
-%global oraclever 19.3
+%global oraclever 19.5
 %global oraclelib 19.1
 %endif
 
@@ -142,7 +146,7 @@
 Summary: PHP scripting language for creating dynamic web sites
 Name: %{?scl_prefix}php
 Version: 5.6.40
-Release: 14%{?dist}
+Release: 15%{?dist}
 # All files licensed under PHP version 3.01, except
 # Zend is licensed under Zend
 # TSRM is licensed under BSD
@@ -223,6 +227,11 @@ Patch224: php-bug77919.patch
 Patch225: php-bug75457.patch
 Patch226: php-bug78380.patch
 Patch227: php-bug78599.patch
+Patch228: php-bug78878.patch
+Patch229: php-bug78862.patch
+Patch230: php-bug78863.patch
+Patch231: php-bug78793.patch
+Patch232: php-bug78910.patch
 
 # Fixes for tests (300+)
 # Factory is droped from system tzdata
@@ -972,6 +981,11 @@ sed -e 's/php-devel/%{?scl_prefix}php-devel/' -i scripts/phpize.in
 %patch225 -p1 -b .bug75457
 %patch226 -p1 -b .bug78380
 %patch227 -p1 -b .bug78599
+%patch228 -p1 -b .bug78878
+%patch229 -p1 -b .bug78862
+%patch230 -p1 -b .bug78863
+%patch231 -p1 -b .bug78793
+%patch232 -p1 -b .bug78910
 
 # Fixes for tests
 %patch300 -p1 -b .datetests
@@ -1735,13 +1749,9 @@ cat << EOF
 
   WARNING : PHP 5.6 have reached its "End of Life" in
   January 2019. Even, if this package includes some of
-  the important security fix, backported from 7.1, the
+  the important security fix, backported from 7.2, the
   UPGRADE to a maintained version is very strongly RECOMMENDED.
 
-%if %{?fedora}%{!?fedora:99} < 28
-  WARNING : Fedora %{fedora} is now EOL :
-  You should consider upgrading to a supported release
-%endif
 =====================================================================
 EOF
 
@@ -1917,6 +1927,22 @@ EOF
 
 
 %changelog
+* Tue Dec 17 2019 Remi Collet <remi@remirepo.net> - 5.6.40-15
+- bcmath:
+  Fix #78878 Buffer underflow in bc_shift_addsub
+  CVE-2019-11046
+- core:
+  Fix #78862 link() silently truncates after a null byte on Windows
+  CVE-2019-11044
+  Fix #78863 DirectoryIterator class silently truncates after a null byte
+  CVE-2019-11045
+- exif
+  Fix #78793 Use-after-free in exif parsing under memory sanitizer
+  CVE-2019-11050
+  Fix #78910 Heap-buffer-overflow READ in exif
+  CVE-2019-11047
+- use oracle client library version 19.5 (18.5 on EL-6)
+
 * Tue Oct 22 2019 Remi Collet <remi@remirepo.net> - 5.6.40-14
 - FPM:
   Fix CVE-2019-11043 env_path_info underflow in fpm_main.c
