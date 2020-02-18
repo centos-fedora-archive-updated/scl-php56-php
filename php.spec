@@ -146,7 +146,7 @@
 Summary: PHP scripting language for creating dynamic web sites
 Name: %{?scl_prefix}php
 Version: 5.6.40
-Release: 17%{?dist}
+Release: 18%{?dist}
 # All files licensed under PHP version 3.01, except
 # Zend is licensed under Zend
 # TSRM is licensed under BSD
@@ -234,6 +234,8 @@ Patch231: php-bug78793.patch
 Patch232: php-bug78910.patch
 Patch233: php-bug79099.patch
 Patch234: php-bug79037.patch
+Patch236: php-bug79221.patch
+Patch237: php-bug79082.patch
 
 # Fixes for tests (300+)
 # Factory is droped from system tzdata
@@ -990,6 +992,8 @@ sed -e 's/php-devel/%{?scl_prefix}php-devel/' -i scripts/phpize.in
 %patch232 -p1 -b .bug78910
 %patch233 -p1 -b .bug79099
 %patch234 -p1 -b .bug79037
+%patch236 -p1 -b .bug79221
+%patch237 -p1 -b .bug79082
 
 # Fixes for tests
 %patch300 -p1 -b .datetests
@@ -1932,6 +1936,14 @@ EOF
 
 
 %changelog
+* Tue Feb 18 2020 Remi Collet <remi@remirepo.net> - 5.6.40-18
+- phar:
+  Fix #79082 Files added to tar with Phar::buildFromIterator have all-access permissions
+  CVE-2020-7063
+- session:
+  Fix #79221 Null Pointer Dereference in PHP Session Upload Progress
+  CVE-2020-7062
+
 * Thu Jan 23 2020 Remi Collet <remi@remirepo.net> - 5.6.40-17
 - mbstring:
   Fix #79037 global buffer-overflow in mbfl_filt_conv_big5_wchar
