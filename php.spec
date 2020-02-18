@@ -243,6 +243,8 @@ Patch237: php-bug79082.patch
 Patch300: php-5.6.30-datetests.patch
 # Revert changes for pcre < 8.34
 Patch301: php-5.6.0-oldpcre.patch
+# Renew openssl certs
+Patch302: php-openssl-cert.patch
 
 # WIP
 
@@ -1003,6 +1005,9 @@ if ! pkg-config libpcre --atleast-version 8.34 ; then
 %patch301 -p1 -b .pcre834
 fi
 %endif
+# New openssl certs
+%patch302 -p1 -b .renewcert
+rm ext/openssl/tests/bug65538_003.phpt
 
 # WIP patch
 
