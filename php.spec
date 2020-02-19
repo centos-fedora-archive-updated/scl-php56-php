@@ -184,6 +184,7 @@ Patch7: php-5.3.0-recode.patch
 Patch8: php-5.6.17-libdb.patch
 Patch9: php-5.5.30-curl.patch
 Patch10: php-5.6.37-icu62.patch
+Patch11: php-5.6.40-gcc10.patch
 
 # Functional changes
 Patch40: php-5.4.0-dlopen.patch
@@ -946,6 +947,7 @@ support for using the enchant library to PHP.
 %if 0%{?fedora} >= 29 || 0%{?rhel} >= 8
 %patch10 -p1 -b .icu62
 %endif
+%patch11 -p1 -b .gcc10
 
 %patch40 -p1 -b .dlopen
 %patch41 -p1 -b .dtrace
@@ -1941,6 +1943,9 @@ EOF
 
 
 %changelog
+* Wed Feb 19 2020 Remi Collet <remi@remirepo.net> - 5.6.40-18.fc32
+- add fix for GCC 10
+
 * Tue Feb 18 2020 Remi Collet <remi@remirepo.net> - 5.6.40-18
 - phar:
   Fix #79082 Files added to tar with Phar::buildFromIterator have all-access permissions
