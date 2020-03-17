@@ -67,7 +67,7 @@
 %endif
 %global oraclelib 18.1
 %else
-%global oraclever 19.5
+%global oraclever 19.6
 %global oraclelib 19.1
 %endif
 
@@ -146,7 +146,7 @@
 Summary: PHP scripting language for creating dynamic web sites
 Name: %{?scl_prefix}php
 Version: 5.6.40
-Release: 18%{?dist}
+Release: 19%{?dist}
 # All files licensed under PHP version 3.01, except
 # Zend is licensed under Zend
 # TSRM is licensed under BSD
@@ -237,6 +237,8 @@ Patch233: php-bug79099.patch
 Patch234: php-bug79037.patch
 Patch236: php-bug79221.patch
 Patch237: php-bug79082.patch
+Patch238: php-bug79282.patch
+Patch239: php-bug79329.patch
 
 # Fixes for tests (300+)
 # Factory is droped from system tzdata
@@ -998,6 +1000,8 @@ sed -e 's/php-devel/%{?scl_prefix}php-devel/' -i scripts/phpize.in
 %patch234 -p1 -b .bug79037
 %patch236 -p1 -b .bug79221
 %patch237 -p1 -b .bug79082
+%patch238 -p1 -b .bug79282
+%patch239 -p1 -b .bug79329
 
 # Fixes for tests
 %patch300 -p1 -b .datetests
@@ -1943,6 +1947,15 @@ EOF
 
 
 %changelog
+* Tue Mar 17 2020 Remi Collet <remi@remirepo.net> - 5.6.40-19
+- standard:
+  Fix #79329 get_headers() silently truncates after a null byte
+  CVE-2020-7066
+- exif:
+  Fix #79282 Use-of-uninitialized-value in exif
+  CVE-2020-7064
+- use oracle client library version 19.6 (18.5 on EL-6)
+
 * Wed Feb 19 2020 Remi Collet <remi@remirepo.net> - 5.6.40-18.fc32
 - add fix for GCC 10
 
