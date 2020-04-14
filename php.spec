@@ -146,7 +146,7 @@
 Summary: PHP scripting language for creating dynamic web sites
 Name: %{?scl_prefix}php
 Version: 5.6.40
-Release: 19%{?dist}
+Release: 20%{?dist}
 # All files licensed under PHP version 3.01, except
 # Zend is licensed under Zend
 # TSRM is licensed under BSD
@@ -239,6 +239,8 @@ Patch236: php-bug79221.patch
 Patch237: php-bug79082.patch
 Patch238: php-bug79282.patch
 Patch239: php-bug79329.patch
+Patch240: php-bug79330.patch
+Patch241: php-bug79465.patch
 
 # Fixes for tests (300+)
 # Factory is droped from system tzdata
@@ -1002,6 +1004,8 @@ sed -e 's/php-devel/%{?scl_prefix}php-devel/' -i scripts/phpize.in
 %patch237 -p1 -b .bug79082
 %patch238 -p1 -b .bug79282
 %patch239 -p1 -b .bug79329
+%patch240 -p1 -b .bug79330
+%patch241 -p1 -b .bug79465
 
 # Fixes for tests
 %patch300 -p1 -b .datetests
@@ -1947,6 +1951,12 @@ EOF
 
 
 %changelog
+* Tue Apr 14 2020 Remi Collet <remi@remirepo.net> - 5.6.40-20
+- standard:
+  Fix #79330 shell_exec silently truncates after a null byte
+  Fix #79465 OOB Read in urldecode
+  CVE-2020-7067
+
 * Tue Mar 17 2020 Remi Collet <remi@remirepo.net> - 5.6.40-19
 - standard:
   Fix #79329 get_headers() silently truncates after a null byte
