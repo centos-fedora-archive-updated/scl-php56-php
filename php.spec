@@ -146,7 +146,7 @@
 Summary: PHP scripting language for creating dynamic web sites
 Name: %{?scl_prefix}php
 Version: 5.6.40
-Release: 20%{?dist}
+Release: 21%{?dist}
 # All files licensed under PHP version 3.01, except
 # Zend is licensed under Zend
 # TSRM is licensed under BSD
@@ -241,6 +241,7 @@ Patch238: php-bug79282.patch
 Patch239: php-bug79329.patch
 Patch240: php-bug79330.patch
 Patch241: php-bug79465.patch
+Patch242: php-bug78875.patch
 
 # Fixes for tests (300+)
 # Factory is droped from system tzdata
@@ -1006,6 +1007,7 @@ sed -e 's/php-devel/%{?scl_prefix}php-devel/' -i scripts/phpize.in
 %patch239 -p1 -b .bug79329
 %patch240 -p1 -b .bug79330
 %patch241 -p1 -b .bug79465
+%patch242 -p1 -b .bug78875
 
 # Fixes for tests
 %patch300 -p1 -b .datetests
@@ -1951,6 +1953,13 @@ EOF
 
 
 %changelog
+* Wed May 13 2020 Remi Collet <remi@remirepo.net> - 5.6.40-21
+- Core:
+  Fix #78875 Long filenames cause OOM and temp files are not cleaned
+  CVE-2019-11048
+  Fix #78876 Long variables in multipart/form-data cause OOM and temp
+  files are not cleaned
+
 * Tue Apr 14 2020 Remi Collet <remi@remirepo.net> - 5.6.40-20
 - standard:
   Fix #79330 shell_exec silently truncates after a null byte
