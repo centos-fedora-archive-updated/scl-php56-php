@@ -146,7 +146,7 @@
 Summary: PHP scripting language for creating dynamic web sites
 Name: %{?scl_prefix}php
 Version: 5.6.40
-Release: 21%{?dist}
+Release: 22%{?dist}
 # All files licensed under PHP version 3.01, except
 # Zend is licensed under Zend
 # TSRM is licensed under BSD
@@ -242,6 +242,8 @@ Patch239: php-bug79329.patch
 Patch240: php-bug79330.patch
 Patch241: php-bug79465.patch
 Patch242: php-bug78875.patch
+Patch243: php-bug79797.patch
+Patch244: php-bug79877.patch
 
 # Fixes for tests (300+)
 # Factory is droped from system tzdata
@@ -949,7 +951,7 @@ support for using the enchant library to PHP.
 %if 0%{?rhel}
 %patch9 -p1 -b .curltls
 %endif
-%if 0%{?fedora} >= 29 || 0%{?rhel} >= 8
+%if 0%{?fedora} >= 29 || 0%{?rhel} >= 7
 %patch10 -p1 -b .icu62
 %endif
 %patch11 -p1 -b .gcc10
@@ -1008,6 +1010,8 @@ sed -e 's/php-devel/%{?scl_prefix}php-devel/' -i scripts/phpize.in
 %patch240 -p1 -b .bug79330
 %patch241 -p1 -b .bug79465
 %patch242 -p1 -b .bug78875
+%patch243 -p1 -b .bug79797
+%patch244 -p1 -b .bug79877
 
 # Fixes for tests
 %patch300 -p1 -b .datetests
@@ -1953,6 +1957,13 @@ EOF
 
 
 %changelog
+* Tue Aug  4 2020 Remi Collet <remi@remirepo.net> - 5.6.40-22
+- Core:
+  Fix #79877 getimagesize function silently truncates after a null byte
+- Phar:
+  Fix #79797 use of freed hash key in the phar_parse_zipfile function
+  CVE-2020-7068
+
 * Wed May 13 2020 Remi Collet <remi@remirepo.net> - 5.6.40-21
 - Core:
   Fix #78875 Long filenames cause OOM and temp files are not cleaned
