@@ -30,7 +30,7 @@
 %global oci8ver     2.0.12
 
 # Use for first build of PHP (before pecl/zip and pecl/jsonc)
-%global php_bootstrap   0
+%bcond_with bootstrap
 
 # Adds -z now to the linker flags
 %global _hardened_build 1
@@ -66,8 +66,13 @@
 %global oraclever 18.3
 %endif
 %global oraclelib 18.1
+
+%else
+%ifarch x86_64
+%global oraclever 19.8
 %else
 %global oraclever 19.6
+%endif
 %global oraclelib 19.1
 %endif
 
@@ -75,7 +80,7 @@
 %global with_lsws     1
 
 # Regression tests take a long time, you can skip 'em with this
-%if %{php_bootstrap}
+%if %{with bootstrap}
 %global runselftest 0
 %else
 %{!?runselftest: %global runselftest 1}
@@ -442,13 +447,13 @@ Provides: %{?scl_prefix}php-sockets, %{?scl_prefix}php-sockets%{?_isa}
 Provides: %{?scl_prefix}php-spl, %{?scl_prefix}php-spl%{?_isa}
 Provides: %{?scl_prefix}php-standard = %{version}, %{?scl_prefix}php-standard%{?_isa} = %{version}
 Provides: %{?scl_prefix}php-tokenizer, %{?scl_prefix}php-tokenizer%{?_isa}
-%if ! %{php_bootstrap}
+%if %{without  bootstrap}
 Requires: %{?scl_prefix}php-pecl-jsonc%{?_isa}
 %endif
 %if %{with_zip}
 Provides: %{?scl_prefix}php-zip, %{?scl_prefix}php-zip%{?_isa}
 %else
-%if ! %{php_bootstrap}
+%if %{without  bootstrap}
 Requires: %{?scl_prefix}php-pecl-zip%{?_isa}
 %endif
 %endif
@@ -478,7 +483,7 @@ Requires: openssl-devel%{?_isa}
 Requires: pcre-devel%{?_isa} >= 8.20
 %endif
 Requires: zlib-devel%{?_isa}
-%if ! %{php_bootstrap}
+%if %{without  bootstrap}
 Requires: %{?scl_prefix}php-pecl-jsonc-devel%{?_isa}
 %endif
 
@@ -935,6 +940,9 @@ support for using the enchant library to PHP.
 
 
 %prep
+%if %{with bootstrap}
+: BOOTSTRAP BUILD
+%endif
 : Building %{name}-%{version}-%{release} with systemd=%{with_systemd} imap=%{with_imap} interbase=%{with_interbase} mcrypt=%{with_mcrypt} freetds=%{with_freetds} sqlite3=%{with_sqlite3} tidy=%{with_tidy} zip=%{with_zip}
 
 %setup -q -n php-%{version}%{?rcver}
@@ -1155,6 +1163,12 @@ sed -e 's:%{_root_sysconfdir}:%{_sysconfdir}:' \
 
 
 %build
+# This package fails to build with LTO due to undefined symbols.  LTO
+# was disabled in OpenSuSE as well, but with no real explanation why
+# beyond the undefined symbols.  It really shold be investigated further.
+# Disable LTO
+%define _lto_cflags %{nil}
+
 # aclocal workaround - to be improved
 cat `aclocal --print-ac-dir`/{libtool,ltoptions,ltsugar,ltversion,lt~obsolete}.m4 >>aclocal.m4
 
