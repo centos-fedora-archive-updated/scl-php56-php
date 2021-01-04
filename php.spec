@@ -69,7 +69,7 @@
 
 %else
 %ifarch x86_64
-%global oraclever 19.8
+%global oraclever 19.9
 %else
 %global oraclever 19.6
 %endif
@@ -94,12 +94,7 @@
 %global with_oci8     %{?_with_oci8:1}%{!?_with_oci8:0}
 
 %global with_imap      1
-# until firebird available in EPEL
-%if 0%{?rhel} == 8
-%global with_interbase 0
-%else
 %global with_interbase 1
-%endif
 %global with_mcrypt    1
 %global with_freetds   1
 %global with_tidy      1
@@ -151,7 +146,7 @@
 Summary: PHP scripting language for creating dynamic web sites
 Name: %{?scl_prefix}php
 Version: 5.6.40
-Release: 22%{?dist}
+Release: 24%{?dist}
 # All files licensed under PHP version 3.01, except
 # Zend is licensed under Zend
 # TSRM is licensed under BSD
@@ -249,6 +244,8 @@ Patch241: php-bug79465.patch
 Patch242: php-bug78875.patch
 Patch243: php-bug79797.patch
 Patch244: php-bug79877.patch
+Patch246: php-bug79699.patch
+Patch247: php-bug77423.patch
 
 # Fixes for tests (300+)
 # Factory is droped from system tzdata
@@ -283,6 +280,7 @@ BuildRequires: bzip2
 BuildRequires: perl
 BuildRequires: autoconf
 BuildRequires: automake
+BuildRequires: make
 BuildRequires: gcc
 BuildRequires: gcc-c++
 BuildRequires: libtool
@@ -471,6 +469,7 @@ Requires: %{?scl_prefix}php-cli%{?_isa} = %{version}-%{release}
 # always needed to build extension
 Requires: autoconf
 Requires: automake
+Requires: make
 Requires: gcc
 Requires: gcc-c++
 Requires: libtool
@@ -1020,6 +1019,8 @@ sed -e 's/php-devel/%{?scl_prefix}php-devel/' -i scripts/phpize.in
 %patch242 -p1 -b .bug78875
 %patch243 -p1 -b .bug79797
 %patch244 -p1 -b .bug79877
+%patch246 -p1 -b .bug79699
+%patch247 -p1 -b .bug77423
 
 # Fixes for tests
 %patch300 -p1 -b .datetests
@@ -1793,7 +1794,7 @@ cat << EOF
 
   WARNING : PHP 5.6 have reached its "End of Life" in
   January 2019. Even, if this package includes some of
-  the important security fix, backported from 7.2, the
+  the important security fix, backported from 7.3, the
   UPGRADE to a maintained version is very strongly RECOMMENDED.
 
 =====================================================================
@@ -1971,6 +1972,15 @@ EOF
 
 
 %changelog
+* Mon Jan  4 2021 Remi Collet <remi@remirepo.net> - 5.6.40-24
+- Fix #77423 FILTER_VALIDATE_URL accepts URLs with invalid userinfo
+  CVE-2020-7071
+
+* Tue Sep 29 2020 Remi Collet <remi@remirepo.net> - 5.6.40-23
+- Core:
+  Fix #79699 PHP parses encoded cookie names so malicious `__Host-` cookies can be sent
+  CVE-2020-7070
+
 * Tue Aug  4 2020 Remi Collet <remi@remirepo.net> - 5.6.40-22
 - Core:
   Fix #79877 getimagesize function silently truncates after a null byte
