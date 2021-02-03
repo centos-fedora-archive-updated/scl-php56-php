@@ -146,7 +146,7 @@
 Summary: PHP scripting language for creating dynamic web sites
 Name: %{?scl_prefix}php
 Version: 5.6.40
-Release: 24%{?dist}
+Release: 25%{?dist}
 # All files licensed under PHP version 3.01, except
 # Zend is licensed under Zend
 # TSRM is licensed under BSD
@@ -246,6 +246,7 @@ Patch243: php-bug79797.patch
 Patch244: php-bug79877.patch
 Patch246: php-bug79699.patch
 Patch247: php-bug77423.patch
+Patch248: php-bug80672.patch
 
 # Fixes for tests (300+)
 # Factory is droped from system tzdata
@@ -1021,6 +1022,7 @@ sed -e 's/php-devel/%{?scl_prefix}php-devel/' -i scripts/phpize.in
 %patch244 -p1 -b .bug79877
 %patch246 -p1 -b .bug79699
 %patch247 -p1 -b .bug77423
+%patch248 -p1 -b .bug80672
 
 # Fixes for tests
 %patch300 -p1 -b .datetests
@@ -1972,6 +1974,11 @@ EOF
 
 
 %changelog
+* Wed Feb  3 2021 Remi Collet <remi@remirepo.net> - 5.6.40-25
+- Fix #80672 Null Dereference in SoapClient
+  CVE-2021-21702
+- better fix for #77423
+
 * Mon Jan  4 2021 Remi Collet <remi@remirepo.net> - 5.6.40-24
 - Fix #77423 FILTER_VALIDATE_URL accepts URLs with invalid userinfo
   CVE-2020-7071
