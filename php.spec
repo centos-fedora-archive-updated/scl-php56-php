@@ -59,22 +59,8 @@
 
 %global mysql_sock %(mysql_config --socket  2>/dev/null || echo /var/lib/mysql/mysql.sock)
 
-%if 0%{?rhel} == 6
-%ifarch x86_64
-%global oraclever 18.5
-%else
-%global oraclever 18.3
-%endif
-%global oraclelib 18.1
-
-%else
-%ifarch x86_64
-%global oraclever 19.9
-%else
-%global oraclever 19.6
-%endif
-%global oraclelib 19.1
-%endif
+%global oraclever 21.1
+%global oraclelib 21.1
 
 # Build for LiteSpeed Web Server (LSAPI)
 %global with_lsws     1
@@ -146,7 +132,7 @@
 Summary: PHP scripting language for creating dynamic web sites
 Name: %{?scl_prefix}php
 Version: 5.6.40
-Release: 25%{?dist}
+Release: 26%{?dist}
 # All files licensed under PHP version 3.01, except
 # Zend is licensed under Zend
 # TSRM is licensed under BSD
@@ -247,6 +233,7 @@ Patch244: php-bug79877.patch
 Patch246: php-bug79699.patch
 Patch247: php-bug77423.patch
 Patch248: php-bug80672.patch
+Patch249: php-bug80710.patch
 
 # Fixes for tests (300+)
 # Factory is droped from system tzdata
@@ -1023,6 +1010,7 @@ sed -e 's/php-devel/%{?scl_prefix}php-devel/' -i scripts/phpize.in
 %patch246 -p1 -b .bug79699
 %patch247 -p1 -b .bug77423
 %patch248 -p1 -b .bug80672
+%patch249 -p1 -b .bug80710
 
 # Fixes for tests
 %patch300 -p1 -b .datetests
@@ -1974,6 +1962,10 @@ EOF
 
 
 %changelog
+* Wed Apr 28 2021 Remi Collet <remi@remirepo.net> - 5.6.40-26
+- Fix #80710 imap_mail_compose() header injection
+- use oracle client library version 21.1
+
 * Wed Feb  3 2021 Remi Collet <remi@remirepo.net> - 5.6.40-25
 - Fix #80672 Null Dereference in SoapClient
   CVE-2021-21702
