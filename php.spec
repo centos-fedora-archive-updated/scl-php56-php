@@ -132,7 +132,7 @@
 Summary: PHP scripting language for creating dynamic web sites
 Name: %{?scl_prefix}php
 Version: 5.6.40
-Release: 26%{?dist}
+Release: 27%{?dist}
 # All files licensed under PHP version 3.01, except
 # Zend is licensed under Zend
 # TSRM is licensed under BSD
@@ -171,6 +171,8 @@ Patch8: php-5.6.17-libdb.patch
 Patch9: php-5.5.30-curl.patch
 Patch10: php-5.6.37-icu62.patch
 Patch11: php-5.6.40-gcc10.patch
+# backported from 8.0
+Patch12: php-net-snmp.patch
 
 # Functional changes
 Patch40: php-5.4.0-dlopen.patch
@@ -950,6 +952,7 @@ support for using the enchant library to PHP.
 %patch10 -p1 -b .icu62
 %endif
 %patch11 -p1 -b .gcc10
+%patch12 -p1 -b .nodes
 
 %patch40 -p1 -b .dlopen
 %patch41 -p1 -b .dtrace
@@ -1962,6 +1965,9 @@ EOF
 
 
 %changelog
+* Thu May 27 2021 Remi Collet <remi@remirepo.net> - 5.6.40-27
+- fix snmp extension build with net-snmp without DES
+
 * Wed Apr 28 2021 Remi Collet <remi@remirepo.net> - 5.6.40-26
 - Fix #80710 imap_mail_compose() header injection
 - use oracle client library version 21.1
