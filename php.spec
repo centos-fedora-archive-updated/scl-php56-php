@@ -132,7 +132,7 @@
 Summary: PHP scripting language for creating dynamic web sites
 Name: %{?scl_prefix}php
 Version: 5.6.40
-Release: 27%{?dist}
+Release: 28%{?dist}
 # All files licensed under PHP version 3.01, except
 # Zend is licensed under Zend
 # TSRM is licensed under BSD
@@ -236,6 +236,8 @@ Patch246: php-bug79699.patch
 Patch247: php-bug77423.patch
 Patch248: php-bug80672.patch
 Patch249: php-bug80710.patch
+Patch250: php-bug81122.patch
+Patch251: php-bug76450.patch
 
 # Fixes for tests (300+)
 # Factory is droped from system tzdata
@@ -1014,6 +1016,8 @@ sed -e 's/php-devel/%{?scl_prefix}php-devel/' -i scripts/phpize.in
 %patch247 -p1 -b .bug77423
 %patch248 -p1 -b .bug80672
 %patch249 -p1 -b .bug80710
+%patch250 -p1 -b .bug81122
+%patch251 -p1 -b .bug76450
 
 # Fixes for tests
 %patch300 -p1 -b .datetests
@@ -1030,7 +1034,7 @@ rm ext/openssl/tests/bug65538_003.phpt
 # WIP patch
 
 # Prevent %%doc confusion over LICENSE files
-cp Zend/LICENSE Zend/ZEND_LICENSE
+cp Zend/LICENSE ZEND_LICENSE
 cp TSRM/LICENSE TSRM_LICENSE
 cp ext/ereg/regex/COPYRIGHT regex_COPYRIGHT
 %if ! %{with_libgd}
@@ -1813,7 +1817,7 @@ EOF
 
 %files common -f files.common
 %doc CODING_STANDARDS CREDITS EXTENSIONS NEWS README*
-%license LICENSE TSRM_LICENSE regex_COPYRIGHT
+%license LICENSE TSRM_LICENSE ZEND_LICENSE regex_COPYRIGHT
 %license libmagic_LICENSE
 %license phar_LICENSE
 %license timelib_LICENSE
@@ -1965,6 +1969,15 @@ EOF
 
 
 %changelog
+* Mon Jun 28 2021 Remi Collet <remi@remirepo.net> - 5.6.40-28
+- Fix #81122 SSRF bypass in FILTER_VALIDATE_URL
+  CVE-2021-21705
+- Fix #76448 Stack buffer overflow in firebird_info_cb
+- Fix #76449 SIGSEGV in firebird_handle_doer
+- Fix #76450 SIGSEGV in firebird_stmt_execute
+- Fix #76452 Crash while parsing blob data in firebird_fetch_blob
+  CVE-2021-21704
+
 * Thu May 27 2021 Remi Collet <remi@remirepo.net> - 5.6.40-27
 - fix snmp extension build with net-snmp without DES
 
