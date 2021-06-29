@@ -1972,6 +1972,8 @@ EOF
 * Mon Jun 28 2021 Remi Collet <remi@remirepo.net> - 5.6.40-28
 - Fix #81122 SSRF bypass in FILTER_VALIDATE_URL
   CVE-2021-21705
+- Fix #65689 PDO_Firebrid / exec() does not free allocated statement
+- Fix #76488 Memory leak when fetching a BLOB field
 - Fix #76448 Stack buffer overflow in firebird_info_cb
 - Fix #76449 SIGSEGV in firebird_handle_doer
 - Fix #76450 SIGSEGV in firebird_stmt_execute
