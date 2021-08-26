@@ -132,7 +132,7 @@
 Summary: PHP scripting language for creating dynamic web sites
 Name: %{?scl_prefix}php
 Version: 5.6.40
-Release: 28%{?dist}
+Release: 29%{?dist}
 # All files licensed under PHP version 3.01, except
 # Zend is licensed under Zend
 # TSRM is licensed under BSD
@@ -238,6 +238,7 @@ Patch248: php-bug80672.patch
 Patch249: php-bug80710.patch
 Patch250: php-bug81122.patch
 Patch251: php-bug76450.patch
+Patch252: php-bug81211.patch
 
 # Fixes for tests (300+)
 # Factory is droped from system tzdata
@@ -1018,6 +1019,7 @@ sed -e 's/php-devel/%{?scl_prefix}php-devel/' -i scripts/phpize.in
 %patch249 -p1 -b .bug80710
 %patch250 -p1 -b .bug81122
 %patch251 -p1 -b .bug76450
+%patch252 -p1 -b .bug81211
 
 # Fixes for tests
 %patch300 -p1 -b .datetests
@@ -1969,6 +1971,9 @@ EOF
 
 
 %changelog
+* Thu Aug 26 2021 Remi Collet <remi@remirepo.net> - 5.6.40-29
+- Fix #81211 Symlinks are followed when creating PHAR archive
+
 * Mon Jun 28 2021 Remi Collet <remi@remirepo.net> - 5.6.40-28
 - Fix #81122 SSRF bypass in FILTER_VALIDATE_URL
   CVE-2021-21705
