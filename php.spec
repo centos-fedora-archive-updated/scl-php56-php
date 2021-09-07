@@ -132,7 +132,7 @@
 Summary: PHP scripting language for creating dynamic web sites
 Name: %{?scl_prefix}php
 Version: 5.6.40
-Release: 29%{?dist}
+Release: 30%{?dist}
 # All files licensed under PHP version 3.01, except
 # Zend is licensed under Zend
 # TSRM is licensed under BSD
@@ -1971,6 +1971,9 @@ EOF
 
 
 %changelog
+* Tue Sep  7 2021 Remi Collet <remi@remirepo.net> - 5.6.40-30
+- fix intl build on F35
+
 * Thu Aug 26 2021 Remi Collet <remi@remirepo.net> - 5.6.40-29
 - Fix #81211 Symlinks are followed when creating PHAR archive
 
