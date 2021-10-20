@@ -59,7 +59,7 @@
 
 %global mysql_sock %(mysql_config --socket  2>/dev/null || echo /var/lib/mysql/mysql.sock)
 
-%global oraclever 21.1
+%global oraclever 21.3
 %global oraclelib 21.1
 
 # Build for LiteSpeed Web Server (LSAPI)
@@ -132,7 +132,7 @@
 Summary: PHP scripting language for creating dynamic web sites
 Name: %{?scl_prefix}php
 Version: 5.6.40
-Release: 30%{?dist}
+Release: 31%{?dist}
 # All files licensed under PHP version 3.01, except
 # Zend is licensed under Zend
 # TSRM is licensed under BSD
@@ -239,6 +239,7 @@ Patch249: php-bug80710.patch
 Patch250: php-bug81122.patch
 Patch251: php-bug76450.patch
 Patch252: php-bug81211.patch
+Patch253: php-bug81026.patch
 
 # Fixes for tests (300+)
 # Factory is droped from system tzdata
@@ -910,7 +911,7 @@ Group: System Environment/Libraries
 License: PHP
 Requires: %{?scl_prefix}php-common%{?_isa} = %{version}-%{release}
 # Upstream requires 4.0, we require 50 to ensure use of libicu-last
-BuildRequires: libicu-devel >= 50
+BuildRequires: libicu-devel >= 69
 
 %description intl
 The %{?scl_prefix}php-intl package contains a dynamic shared object that will add
@@ -1020,6 +1021,7 @@ sed -e 's/php-devel/%{?scl_prefix}php-devel/' -i scripts/phpize.in
 %patch250 -p1 -b .bug81122
 %patch251 -p1 -b .bug76450
 %patch252 -p1 -b .bug81211
+%patch253 -p1 -b .bug81026
 
 # Fixes for tests
 %patch300 -p1 -b .datetests
@@ -1401,8 +1403,7 @@ popd
 
 %check
 %if %runselftest
-
-cd build-apache
+cd build-fpm
 
 # Run tests, using the CLI SAPI
 export NO_INTERACTION=1 REPORT_EXIT_STATUS=1 MALLOC_CHECK_=2
@@ -1971,6 +1972,12 @@ EOF
 
 
 %changelog
+* Wed Oct 20 2021 Remi Collet <remi@remirepo.net> - 5.6.40-31
+- fix PHP-FPM oob R/W in root process leading to priv escalation
+  CVE-2021-21703
+- use libicu version 69
+- use oracle client library version 21.3
+
 * Tue Sep  7 2021 Remi Collet <remi@remirepo.net> - 5.6.40-30
 - fix intl build on F35
 
