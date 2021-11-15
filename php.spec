@@ -132,7 +132,7 @@
 Summary: PHP scripting language for creating dynamic web sites
 Name: %{?scl_prefix}php
 Version: 5.6.40
-Release: 31%{?dist}
+Release: 32%{?dist}
 # All files licensed under PHP version 3.01, except
 # Zend is licensed under Zend
 # TSRM is licensed under BSD
@@ -240,6 +240,7 @@ Patch250: php-bug81122.patch
 Patch251: php-bug76450.patch
 Patch252: php-bug81211.patch
 Patch253: php-bug81026.patch
+Patch254: php-bug79971.patch
 
 # Fixes for tests (300+)
 # Factory is droped from system tzdata
@@ -1022,6 +1023,7 @@ sed -e 's/php-devel/%{?scl_prefix}php-devel/' -i scripts/phpize.in
 %patch251 -p1 -b .bug76450
 %patch252 -p1 -b .bug81211
 %patch253 -p1 -b .bug81026
+%patch254 -p1 -b .bug79971
 
 # Fixes for tests
 %patch300 -p1 -b .datetests
@@ -1972,6 +1974,10 @@ EOF
 
 
 %changelog
+* Mon Nov 15 2021 Remi Collet <remi@remirepo.net> - 5.6.40-32
+- Fix #79971 special character is breaking the path in xml function
+  CVE-2021-21707
+
 * Wed Oct 20 2021 Remi Collet <remi@remirepo.net> - 5.6.40-31
 - fix PHP-FPM oob R/W in root process leading to priv escalation
   CVE-2021-21703
