@@ -59,7 +59,7 @@
 
 %global mysql_sock %(mysql_config --socket  2>/dev/null || echo /var/lib/mysql/mysql.sock)
 
-%global oraclever 21.3
+%global oraclever 21.6
 %global oraclelib 21.1
 
 # Build for LiteSpeed Web Server (LSAPI)
@@ -132,7 +132,7 @@
 Summary: PHP scripting language for creating dynamic web sites
 Name: %{?scl_prefix}php
 Version: 5.6.40
-Release: 32%{?dist}
+Release: 33%{?dist}
 # All files licensed under PHP version 3.01, except
 # Zend is licensed under Zend
 # TSRM is licensed under BSD
@@ -241,6 +241,8 @@ Patch251: php-bug76450.patch
 Patch252: php-bug81211.patch
 Patch253: php-bug81026.patch
 Patch254: php-bug79971.patch
+Patch255: php-bug81719.patch
+Patch256: php-bug81720.patch
 
 # Fixes for tests (300+)
 # Factory is droped from system tzdata
@@ -781,12 +783,7 @@ BuildRequires: libXpm-devel
 BuildRequires: t1lib-devel
 %endif
 %if %{with_libgd}
-BuildRequires: gd-devel >= 2.1.1
-%if 0%{?fedora} <= 19 && 0%{?rhel} <= 7
-Requires: gd-last%{?_isa} >= 2.1.1
-%else
-Requires: gd%{?_isa} >= 2.1.1
-%endif
+BuildRequires: gd-devel >= 2.3.3
 %else
 %if %{with_vpx}
 BuildRequires: libvpx-devel
@@ -1024,6 +1021,8 @@ sed -e 's/php-devel/%{?scl_prefix}php-devel/' -i scripts/phpize.in
 %patch252 -p1 -b .bug81211
 %patch253 -p1 -b .bug81026
 %patch254 -p1 -b .bug79971
+%patch255 -p1 -b .bug81719
+%patch256 -p1 -b .bug81720
 
 # Fixes for tests
 %patch300 -p1 -b .datetests
@@ -1796,7 +1795,7 @@ cat << EOF
 
   WARNING : PHP 5.6 have reached its "End of Life" in
   January 2019. Even, if this package includes some of
-  the important security fix, backported from 7.3, the
+  the important security fix, backported from 7.4, the
   UPGRADE to a maintained version is very strongly RECOMMENDED.
 
 =====================================================================
@@ -1974,6 +1973,11 @@ EOF
 
 
 %changelog
+* Tue Jun  7 2022 Remi Collet <remi@remirepo.net> - 5.6.40-33
+- use oracle client library version 21.6
+- mysqlnd: fix #81719: mysqlnd/pdo password buffer overflow. CVE-2022-31626
+- pgsql: fix #81720: Uninitialized array in pg_query_params(). CVE-2022-31625
+
 * Mon Nov 15 2021 Remi Collet <remi@remirepo.net> - 5.6.40-32
 - Fix #79971 special character is breaking the path in xml function
   CVE-2021-21707
