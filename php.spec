@@ -59,7 +59,7 @@
 
 %global mysql_sock %(mysql_config --socket  2>/dev/null || echo /var/lib/mysql/mysql.sock)
 
-%global oraclever 21.6
+%global oraclever 21.7
 %global oraclelib 21.1
 
 # Build for LiteSpeed Web Server (LSAPI)
@@ -132,7 +132,7 @@
 Summary: PHP scripting language for creating dynamic web sites
 Name: %{?scl_prefix}php
 Version: 5.6.40
-Release: 33%{?dist}
+Release: 34%{?dist}
 # All files licensed under PHP version 3.01, except
 # Zend is licensed under Zend
 # TSRM is licensed under BSD
@@ -243,6 +243,8 @@ Patch253: php-bug81026.patch
 Patch254: php-bug79971.patch
 Patch255: php-bug81719.patch
 Patch256: php-bug81720.patch
+Patch257: php-bug81727.patch
+Patch258: php-bug81726.patch
 
 # Fixes for tests (300+)
 # Factory is droped from system tzdata
@@ -348,7 +350,9 @@ The %{?scl_prefix}php-dbg package contains the interactive PHP debugger.
 Group: Development/Languages
 Summary: PHP FastCGI Process Manager
 BuildRequires: libacl-devel
+%if ! %{with_httpd2410}
 Requires(pre): %{_root_sbindir}/useradd
+%endif
 Requires: %{?scl_prefix}php-common%{?_isa} = %{version}-%{release}
 %if %{with_systemd}
 BuildRequires: systemd-devel
@@ -908,8 +912,8 @@ Group: System Environment/Libraries
 # All files licensed under PHP version 3.01
 License: PHP
 Requires: %{?scl_prefix}php-common%{?_isa} = %{version}-%{release}
-# Upstream requires 4.0, we require 50 to ensure use of libicu-last
-BuildRequires: libicu-devel >= 69
+# Upstream requires 4.0, we require 69.1 to ensure use of libicu69
+BuildRequires: libicu-devel = 69.1
 
 %description intl
 The %{?scl_prefix}php-intl package contains a dynamic shared object that will add
@@ -1023,6 +1027,8 @@ sed -e 's/php-devel/%{?scl_prefix}php-devel/' -i scripts/phpize.in
 %patch254 -p1 -b .bug79971
 %patch255 -p1 -b .bug81719
 %patch256 -p1 -b .bug81720
+%patch257 -p1 -b .bug81727
+%patch258 -p1 -b .bug81726
 
 # Fixes for tests
 %patch300 -p1 -b .datetests
@@ -1973,6 +1979,12 @@ EOF
 
 
 %changelog
+* Tue Sep 27 2022 Remi Collet <remi@remirepo.net> - 5.6.40-34
+- phar: fix #81726 DOS when using quine gzip file. CVE-2022-31628
+- core: fix #81727 Don't mangle HTTP variable names that clash with ones
+  that have a specific semantic meaning. CVE-2022-31629
+- use oracle client library version 21.7
+
 * Tue Jun  7 2022 Remi Collet <remi@remirepo.net> - 5.6.40-33
 - use oracle client library version 21.6
 - mysqlnd: fix #81719: mysqlnd/pdo password buffer overflow. CVE-2022-31626
