@@ -1,26 +1,13 @@
-===== 5.6.40-16 (2020-01-21)
+===== 5.6.40-36 (2023-02-15)
 
 $ grep -r 'Tests failed' /var/lib/mock/scl56*/build.log
 
-/var/lib/mock/scl56el6x/build.log:Tests failed    :     3
-/var/lib/mock/scl56el7x/build.log:Tests failed    :     2
-/var/lib/mock/scl56el8x/build.log:Tests failed    :    28
-/var/lib/mock/scl56fc30x/build.log:Tests failed    :    3
-/var/lib/mock/scl56fc31x/build.log:Tests failed    :    3
-/var/lib/mock/scl56fc32x/build.log:Tests failed    :    3
+/var/lib/mock/scl56el7x/build.log:Tests failed    :    20
+/var/lib/mock/scl56el8x/build.log:Tests failed    :    34
 
 
-el6x:
-	3	Bug #65538: SSL context "cafile" disallows URL stream wrappers [ext/openssl/tests/bug65538_002.phpt]
-	3	gethostbyname() function - basic return valid ip address test [ext/standard/tests/network/gethostbyname_error004.phpt]
-	3	getmxrr() test [ext/standard/tests/network/getmxrr.phpt]
-el7x:
-	2	Bug #75457 (heap-use-after-free in php7.0.25) [ext/pcre/tests/bug75457.phpt]
-el7x, fc30x, fc31x, fc32x:
-		openssl_error_string() tests [ext/openssl/tests/openssl_error_string_basic.phpt]
-fc30x, fc31x, fc32x:
-	2	substr_compare() [ext/standard/tests/strings/substr_compare.phpt]
-		TLS server rate-limits client-initiated renegotiation [ext/openssl/tests/stream_server_reneg_limit.phpt]
+el7x, el8x:
+	2	related to tzdata, expired test cert and openssl policy
 
 
 1	proc_open have erratic results... :(

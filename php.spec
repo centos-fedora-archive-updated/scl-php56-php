@@ -59,7 +59,7 @@
 
 %global mysql_sock %(mysql_config --socket  2>/dev/null || echo /var/lib/mysql/mysql.sock)
 
-%global oraclever 21.7
+%global oraclever 21.8
 %global oraclelib 21.1
 
 # Build for LiteSpeed Web Server (LSAPI)
@@ -132,7 +132,7 @@
 Summary: PHP scripting language for creating dynamic web sites
 Name: %{?scl_prefix}php
 Version: 5.6.40
-Release: 34%{?dist}
+Release: 36%{?dist}
 # All files licensed under PHP version 3.01, except
 # Zend is licensed under Zend
 # TSRM is licensed under BSD
@@ -245,6 +245,10 @@ Patch255: php-bug81719.patch
 Patch256: php-bug81720.patch
 Patch257: php-bug81727.patch
 Patch258: php-bug81726.patch
+Patch259: php-bug81740.patch
+Patch260: php-bug81744.patch
+Patch261: php-bug81746.patch
+Patch262: php-cve-2023-0662.patch
 
 # Fixes for tests (300+)
 # Factory is droped from system tzdata
@@ -1029,6 +1033,10 @@ sed -e 's/php-devel/%{?scl_prefix}php-devel/' -i scripts/phpize.in
 %patch256 -p1 -b .bug81720
 %patch257 -p1 -b .bug81727
 %patch258 -p1 -b .bug81726
+%patch259 -p1 -b .bug81740
+%patch260 -p1 -b .bug81744
+%patch261 -p1 -b .bug81746
+%patch262 -p1 -b .cve0662
 
 # Fixes for tests
 %patch300 -p1 -b .datetests
@@ -1801,7 +1809,7 @@ cat << EOF
 
   WARNING : PHP 5.6 have reached its "End of Life" in
   January 2019. Even, if this package includes some of
-  the important security fix, backported from 7.4, the
+  the important security fixes, backported from 8.0, the
   UPGRADE to a maintained version is very strongly RECOMMENDED.
 
 =====================================================================
@@ -1979,6 +1987,19 @@ EOF
 
 
 %changelog
+* Tue Feb 14 2023 Remi Collet <remi@remirepo.net> - 5.6.40-36
+- fix #81744: Password_verify() always return true with some hash
+  CVE-2023-0567
+- fix #81746: 1-byte array overrun in common path resolve code
+  CVE-2023-0568
+- fix DOS vulnerability when parsing multipart request body
+  CVE-2023-0662
+
+* Tue Dec 20 2022 Remi Collet <remi@remirepo.net> - 5.6.40-35
+- pdo: fix #81740: PDO::quote() may return unquoted string
+  CVE-2022-31631
+- use oracle client library version 21.8
+
 * Tue Sep 27 2022 Remi Collet <remi@remirepo.net> - 5.6.40-34
 - phar: fix #81726 DOS when using quine gzip file. CVE-2022-31628
 - core: fix #81727 Don't mangle HTTP variable names that clash with ones
