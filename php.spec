@@ -59,7 +59,7 @@
 
 %global mysql_sock %(mysql_config --socket  2>/dev/null || echo /var/lib/mysql/mysql.sock)
 
-%global oraclever 21.8
+%global oraclever 21.10
 %global oraclelib 21.1
 
 # Build for LiteSpeed Web Server (LSAPI)
@@ -132,7 +132,7 @@
 Summary: PHP scripting language for creating dynamic web sites
 Name: %{?scl_prefix}php
 Version: 5.6.40
-Release: 36%{?dist}
+Release: 37%{?dist}
 # All files licensed under PHP version 3.01, except
 # Zend is licensed under Zend
 # TSRM is licensed under BSD
@@ -249,6 +249,7 @@ Patch259: php-bug81740.patch
 Patch260: php-bug81744.patch
 Patch261: php-bug81746.patch
 Patch262: php-cve-2023-0662.patch
+Patch263: php-ghsa-76gg-c692-v2mw.patch
 
 # Fixes for tests (300+)
 # Factory is droped from system tzdata
@@ -1037,6 +1038,7 @@ sed -e 's/php-devel/%{?scl_prefix}php-devel/' -i scripts/phpize.in
 %patch260 -p1 -b .bug81744
 %patch261 -p1 -b .bug81746
 %patch262 -p1 -b .cve0662
+%patch263 -p1 -b .ghsa-76gg-c692-v2mw
 
 # Fixes for tests
 %patch300 -p1 -b .datetests
@@ -1987,6 +1989,11 @@ EOF
 
 
 %changelog
+* Wed Jun  7 2023 Remi Collet <remi@remirepo.net> - 5.6.40-37
+- Fix insufficient random bytes in HTTP Digest authentication for SOAP
+  GHSA-76gg-c692-v2mw
+- use oracle client library version 21.10
+
 * Tue Feb 14 2023 Remi Collet <remi@remirepo.net> - 5.6.40-36
 - fix #81744: Password_verify() always return true with some hash
   CVE-2023-0567
