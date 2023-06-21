@@ -14,3 +14,7 @@
 
 %@SCL@__php        @BINDIR@/php
 
+%@SCL@__phpize     @BINDIR@/phpize
+
+%@SCL@__phpconfig  @BINDIR@/php-config
+

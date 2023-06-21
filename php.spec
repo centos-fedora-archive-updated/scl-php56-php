@@ -132,7 +132,7 @@
 Summary: PHP scripting language for creating dynamic web sites
 Name: %{?scl_prefix}php
 Version: 5.6.40
-Release: 37%{?dist}
+Release: 38%{?dist}
 # All files licensed under PHP version 3.01, except
 # Zend is licensed under Zend
 # TSRM is licensed under BSD
@@ -249,7 +249,7 @@ Patch259: php-bug81740.patch
 Patch260: php-bug81744.patch
 Patch261: php-bug81746.patch
 Patch262: php-cve-2023-0662.patch
-Patch263: php-ghsa-76gg-c692-v2mw.patch
+Patch263: php-cve-2023-3247.patch
 
 # Fixes for tests (300+)
 # Factory is droped from system tzdata
@@ -947,109 +947,109 @@ support for using the enchant library to PHP.
 
 %setup -q -n php-%{version}%{?rcver}
 
-%patch1 -p1 -b .mpmcheck
-%patch2 -p1 -b .fb_config
+%patch -P1 -p1 -b .mpmcheck
+%patch -P2 -p1 -b .fb_config
 %if 0%{?fedora} >= 26 || 0%{?rhel} >= 8
-%patch3 -p1 -b .openssl11
+%patch -P3 -p1 -b .openssl11
 %endif
-%patch5 -p1 -b .includedir
-%patch6 -p1 -b .embed
-%patch7 -p1 -b .recode
-%patch8 -p1 -b .libdb
+%patch -P5 -p1 -b .includedir
+%patch -P6 -p1 -b .embed
+%patch -P7 -p1 -b .recode
+%patch -P8 -p1 -b .libdb
 %if 0%{?rhel}
-%patch9 -p1 -b .curltls
+%patch -P9 -p1 -b .curltls
 %endif
 %if 0%{?fedora} >= 29 || 0%{?rhel} >= 7
-%patch10 -p1 -b .icu62
+%patch -P10 -p1 -b .icu62
 %endif
-%patch11 -p1 -b .gcc10
-%patch12 -p1 -b .nodes
+%patch -P11 -p1 -b .gcc10
+%patch -P12 -p1 -b .nodes
 
-%patch40 -p1 -b .dlopen
-%patch41 -p1 -b .dtrace
+%patch -P40 -p1 -b .dlopen
+%patch -P41 -p1 -b .dtrace
 %if 0%{?fedora} >= 28 || 0%{?rhel} >= 6
-%patch42 -p1 -b .systzdata
+%patch -P42 -p1 -b .systzdata
 %endif
-%patch43 -p1 -b .headers
+%patch -P43 -p1 -b .headers
 sed -e 's/php-devel/%{?scl_prefix}php-devel/' -i scripts/phpize.in
 %if 0%{?fedora} >= 18 || 0%{?rhel} >= 7
-%patch45 -p1 -b .ldap_r
+%patch -P45 -p1 -b .ldap_r
 %endif
-%patch46 -p1 -b .fixheader
-%patch47 -p1 -b .phpinfo
+%patch -P46 -p1 -b .fixheader
+%patch -P47 -p1 -b .phpinfo
 
-%patch91 -p1 -b .remi-oci8
+%patch -P91 -p1 -b .remi-oci8
 
 # upstream patches
-%patch100 -p1 -b .pdo_oci
-%patch103 -p1 -b .bug76846
+%patch -P100 -p1 -b .pdo_oci
+%patch -P103 -p1 -b .bug76846
 
 # security patches
-%patch208 -p1 -b .bug77396
-%patch209 -p1 -b .bug77431
-%patch210 -p1 -b .bug77540
-%patch211 -p1 -b .bug77563
-%patch212 -p1 -b .bug77586
-%patch213 -p1 -b .bug77630
-%patch214 -p1 -b .backport
-%patch215 -p1 -b .sqlite3.defensive
-%patch216 -p1 -b .bug77753
-%patch217 -p1 -b .bug77831
-%patch218 -p1 -b .bug77950
-%patch219 -p1 -b .bug78069
-%patch220 -p1 -b .bug77988
-%patch221 -p1 -b .bug77967
-%patch222 -p1 -b .bug78222
-%patch223 -p1 -b .bug78256
-%patch224 -p1 -b .bug77919
-%patch225 -p1 -b .bug75457
-%patch226 -p1 -b .bug78380
-%patch227 -p1 -b .bug78599
-%patch228 -p1 -b .bug78878
-%patch229 -p1 -b .bug78862
-%patch230 -p1 -b .bug78863
-%patch231 -p1 -b .bug78793
-%patch232 -p1 -b .bug78910
-%patch233 -p1 -b .bug79099
-%patch234 -p1 -b .bug79037
-%patch236 -p1 -b .bug79221
-%patch237 -p1 -b .bug79082
-%patch238 -p1 -b .bug79282
-%patch239 -p1 -b .bug79329
-%patch240 -p1 -b .bug79330
-%patch241 -p1 -b .bug79465
-%patch242 -p1 -b .bug78875
-%patch243 -p1 -b .bug79797
-%patch244 -p1 -b .bug79877
-%patch246 -p1 -b .bug79699
-%patch247 -p1 -b .bug77423
-%patch248 -p1 -b .bug80672
-%patch249 -p1 -b .bug80710
-%patch250 -p1 -b .bug81122
-%patch251 -p1 -b .bug76450
-%patch252 -p1 -b .bug81211
-%patch253 -p1 -b .bug81026
-%patch254 -p1 -b .bug79971
-%patch255 -p1 -b .bug81719
-%patch256 -p1 -b .bug81720
-%patch257 -p1 -b .bug81727
-%patch258 -p1 -b .bug81726
-%patch259 -p1 -b .bug81740
-%patch260 -p1 -b .bug81744
-%patch261 -p1 -b .bug81746
-%patch262 -p1 -b .cve0662
-%patch263 -p1 -b .ghsa-76gg-c692-v2mw
+%patch -P208 -p1 -b .bug77396
+%patch -P209 -p1 -b .bug77431
+%patch -P210 -p1 -b .bug77540
+%patch -P211 -p1 -b .bug77563
+%patch -P212 -p1 -b .bug77586
+%patch -P213 -p1 -b .bug77630
+%patch -P214 -p1 -b .backport
+%patch -P215 -p1 -b .sqlite3.defensive
+%patch -P216 -p1 -b .bug77753
+%patch -P217 -p1 -b .bug77831
+%patch -P218 -p1 -b .bug77950
+%patch -P219 -p1 -b .bug78069
+%patch -P220 -p1 -b .bug77988
+%patch -P221 -p1 -b .bug77967
+%patch -P222 -p1 -b .bug78222
+%patch -P223 -p1 -b .bug78256
+%patch -P224 -p1 -b .bug77919
+%patch -P225 -p1 -b .bug75457
+%patch -P226 -p1 -b .bug78380
+%patch -P227 -p1 -b .bug78599
+%patch -P228 -p1 -b .bug78878
+%patch -P229 -p1 -b .bug78862
+%patch -P230 -p1 -b .bug78863
+%patch -P231 -p1 -b .bug78793
+%patch -P232 -p1 -b .bug78910
+%patch -P233 -p1 -b .bug79099
+%patch -P234 -p1 -b .bug79037
+%patch -P236 -p1 -b .bug79221
+%patch -P237 -p1 -b .bug79082
+%patch -P238 -p1 -b .bug79282
+%patch -P239 -p1 -b .bug79329
+%patch -P240 -p1 -b .bug79330
+%patch -P241 -p1 -b .bug79465
+%patch -P242 -p1 -b .bug78875
+%patch -P243 -p1 -b .bug79797
+%patch -P244 -p1 -b .bug79877
+%patch -P246 -p1 -b .bug79699
+%patch -P247 -p1 -b .bug77423
+%patch -P248 -p1 -b .bug80672
+%patch -P249 -p1 -b .bug80710
+%patch -P250 -p1 -b .bug81122
+%patch -P251 -p1 -b .bug76450
+%patch -P252 -p1 -b .bug81211
+%patch -P253 -p1 -b .bug81026
+%patch -P254 -p1 -b .bug79971
+%patch -P255 -p1 -b .bug81719
+%patch -P256 -p1 -b .bug81720
+%patch -P257 -p1 -b .bug81727
+%patch -P258 -p1 -b .bug81726
+%patch -P259 -p1 -b .bug81740
+%patch -P260 -p1 -b .bug81744
+%patch -P261 -p1 -b .bug81746
+%patch -P262 -p1 -b .cve0662
+%patch -P263 -p1 -b .cve3247
 
 # Fixes for tests
-%patch300 -p1 -b .datetests
+%patch -P300 -p1 -b .datetests
 %if %{with_libpcre}
 if ! pkg-config libpcre --atleast-version 8.34 ; then
 # Only apply when system libpcre < 8.34
-%patch301 -p1 -b .pcre834
+%patch -P301 -p1 -b .pcre834
 fi
 %endif
 # New openssl certs
-%patch302 -p1 -b .renewcert
+%patch -P302 -p1 -b .renewcert
 rm ext/openssl/tests/bug65538_003.phpt
 
 # WIP patch
@@ -1989,9 +1989,13 @@ EOF
 
 
 %changelog
+* Wed Jun 21 2023 Remi Collet <remi@remirepo.net> - 5.6.40-38
+- fix possible buffer overflow in date
+- define %%php56___phpize and %%php56___phpconfig
+
 * Wed Jun  7 2023 Remi Collet <remi@remirepo.net> - 5.6.40-37
 - Fix insufficient random bytes in HTTP Digest authentication for SOAP
-  GHSA-76gg-c692-v2mw
+  GHSA-76gg-c692-v2mw  CVE-2023-3247
 - use oracle client library version 21.10
 
 * Tue Feb 14 2023 Remi Collet <remi@remirepo.net> - 5.6.40-36
