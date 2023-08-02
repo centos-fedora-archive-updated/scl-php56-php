@@ -132,7 +132,7 @@
 Summary: PHP scripting language for creating dynamic web sites
 Name: %{?scl_prefix}php
 Version: 5.6.40
-Release: 38%{?dist}
+Release: 39%{?dist}
 # All files licensed under PHP version 3.01, except
 # Zend is licensed under Zend
 # TSRM is licensed under BSD
@@ -250,6 +250,8 @@ Patch260: php-bug81744.patch
 Patch261: php-bug81746.patch
 Patch262: php-cve-2023-0662.patch
 Patch263: php-cve-2023-3247.patch
+Patch264: php-cve-2023-3823.patch
+Patch265: php-cve-2023-3824.patch
 
 # Fixes for tests (300+)
 # Factory is droped from system tzdata
@@ -1039,6 +1041,8 @@ sed -e 's/php-devel/%{?scl_prefix}php-devel/' -i scripts/phpize.in
 %patch -P261 -p1 -b .bug81746
 %patch -P262 -p1 -b .cve0662
 %patch -P263 -p1 -b .cve3247
+%patch -P264 -p1 -b .cve3823
+%patch -P265 -p1 -b .cve3824
 
 # Fixes for tests
 %patch -P300 -p1 -b .datetests
@@ -1532,8 +1536,8 @@ mv $RPM_BUILD_ROOT%{_sysconfdir}/php-fpm.conf.default .
 %if %{with_systemd}
 install -Dm 644 %{SOURCE6}  $RPM_BUILD_ROOT%{_unitdir}/%{?scl_prefix}php-fpm.service
 %if 0%{?fedora} >= 27 || 0%{?rhel} >= 8
-install -Dm 644 %{SOURCE12} $RPM_BUILD_ROOT%{_unitdir}/httpd.service.d/%{?scl_prefix}php-fpm.conf
-install -Dm 644 %{SOURCE12} $RPM_BUILD_ROOT%{_unitdir}/nginx.service.d/%{?scl_prefix}php-fpm.conf
+install -Dm 644 %{SOURCE12} $RPM_BUILD_ROOT%{_root_sysconfdir}/systemd/system/httpd.service.d/%{?scl_prefix}php-fpm.conf
+install -Dm 644 %{SOURCE12} $RPM_BUILD_ROOT%{_root_sysconfdir}/systemd/system/nginx.service.d/%{?scl_prefix}php-fpm.conf
 %endif
 sed -e 's:/run:%{_localstatedir}/run:' \
     -e 's:/etc/sysconfig:%{_sysconfdir}/sysconfig:' \
@@ -1900,8 +1904,8 @@ EOF
 %if %{with_systemd}
 %{_unitdir}/%{?scl_prefix}php-fpm.service
 %if 0%{?fedora} >= 27 || 0%{?rhel} >= 8
-%{_unitdir}/httpd.service.d/%{?scl_prefix}php-fpm.conf
-%{_unitdir}/nginx.service.d/%{?scl_prefix}php-fpm.conf
+%config(noreplace) %{_root_sysconfdir}/systemd/system/httpd.service.d/%{?scl_prefix}php-fpm.conf
+%config(noreplace) %{_root_sysconfdir}/systemd/system/nginx.service.d/%{?scl_prefix}php-fpm.conf
 %endif
 %dir %{_root_sysconfdir}/systemd/system/%{?scl_prefix}php-fpm.service.d
 %else
@@ -1989,6 +1993,13 @@ EOF
 
 
 %changelog
+* Wed Aug  2 2023 Remi Collet <remi@remirepo.net> - 5.6.40-39
+- Fix Security issue with external entity loading in XML without enabling it
+  GHSA-3qrf-m4j2-pcrr CVE-2023-3823
+- Fix Buffer mismanagement in phar_dir_read()
+  GHSA-jqcx-ccgc-xwhv CVE-2023-3824
+- move httpd/nginx wants directive to config files in /etc
+
 * Wed Jun 21 2023 Remi Collet <remi@remirepo.net> - 5.6.40-38
 - fix possible buffer overflow in date
 - define %%php56___phpize and %%php56___phpconfig
