@@ -59,8 +59,15 @@
 
 %global mysql_sock %(mysql_config --socket  2>/dev/null || echo /var/lib/mysql/mysql.sock)
 
-%global oraclever 21.10
+%ifarch aarch64
+%global oraclever 19.19
+%global oraclelib 19.1
+%global oracledir 19.19
+%else
+%global oraclever 21.11
 %global oraclelib 21.1
+%global oracledir 21
+%endif
 
 # Build for LiteSpeed Web Server (LSAPI)
 %global with_lsws     1
@@ -687,15 +694,20 @@ Summary:        A module for PHP applications that use OCI8 databases
 Group:          Development/Languages
 # All files licensed under PHP version 3.01
 License:        PHP
+%ifarch aarch64
+BuildRequires:  oracle-instantclient%{oraclever}-devel
+# Should requires libclntsh.so.19.1()(aarch-64), but it's not provided by Oracle RPM.
+Requires:       libclntsh.so.%{oraclelib}
+AutoReq:        0
+%else
 BuildRequires:  oracle-instantclient-devel >= %{oraclever}
+%endif
 Requires:       %{?scl_prefix}php-pdo%{?_isa} = %{version}-%{release}
 Provides:       %{?scl_prefix}php_database
 Provides:       %{?scl_prefix}php-pdo_oci, %{?scl_prefix}php-pdo_oci%{?_isa}
 Obsoletes:      %{?scl_prefix}php-pecl-oci8 <  %{oci8ver}
 Conflicts:      %{?scl_prefix}php-pecl-oci8 >= %{oci8ver}
 Provides:       %{?scl_prefix}php-pecl(oci8) = %{oci8ver}, %{?scl_prefix}php-pecl(oci8)%{?_isa} = %{oci8ver}
-# Should requires libclntsh.so.12.1, but it's not provided by Oracle RPM.
-AutoReq:        0
 
 %description oci8
 The %{?scl_prefix}php-oci8 packages provides the OCI8 extension version %{oci8ver}
@@ -705,13 +717,9 @@ The extension is linked with Oracle client libraries %{oraclever}
 (Oracle Instant Client).  For details, see Oracle's note
 "Oracle Client / Server Interoperability Support" (ID 207303.1).
 
-You must install libclntsh.so.%{oraclelib} to use this package, provided
-in the database installation, or in the free Oracle Instant Client
-available from Oracle.
-
-Notice:
-- %{?scl_prefix}php-oci8 provides oci8 and pdo_oci extensions from php sources.
-- %{?scl_prefix}php-pecl-oci8 only provides oci8 extension.
+You must install libclntsh.so.%{oraclelib} to use this package,
+provided by Oracle Instant Client RPM available from Oracle on:
+https://www.oracle.com/database/technologies/instant-client/downloads.html
 
 Documentation is at http://php.net/oci8 and http://php.net/pdo_oci
 %endif
@@ -1315,7 +1323,7 @@ build --libdir=%{_libdir}/php \
       --with-mysqli=shared,mysqlnd \
       --with-mysql-sock=%{mysql_sock} \
 %if %{with_oci8}
-      --with-oci8=shared,instantclient,%{_root_libdir}/oracle/%{oraclever}/client64/lib,%{oraclever} \
+         --with-oci8=shared,instantclient,%{_root_prefix}/lib/oracle/%{oracledir}/client64/lib,%{oraclever} \
       --with-pdo-oci=shared,instantclient,%{_root_prefix},%{oraclever} \
 %endif
 %if %{with_interbase}
