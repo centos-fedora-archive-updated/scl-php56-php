@@ -64,7 +64,7 @@
 %global oraclelib 19.1
 %global oracledir 19.19
 %else
-%global oraclever 21.11
+%global oraclever 21.13
 %global oraclelib 21.1
 %global oracledir 21
 %endif
@@ -139,7 +139,7 @@
 Summary: PHP scripting language for creating dynamic web sites
 Name: %{?scl_prefix}php
 Version: 5.6.40
-Release: 39%{?dist}
+Release: 40%{?dist}
 # All files licensed under PHP version 3.01, except
 # Zend is licensed under Zend
 # TSRM is licensed under BSD
@@ -259,6 +259,8 @@ Patch262: php-cve-2023-0662.patch
 Patch263: php-cve-2023-3247.patch
 Patch264: php-cve-2023-3823.patch
 Patch265: php-cve-2023-3824.patch
+Patch266: php-cve-2024-2756.patch
+Patch267: php-cve-2024-3096.patch
 
 # Fixes for tests (300+)
 # Factory is droped from system tzdata
@@ -1051,6 +1053,8 @@ sed -e 's/php-devel/%{?scl_prefix}php-devel/' -i scripts/phpize.in
 %patch -P263 -p1 -b .cve3247
 %patch -P264 -p1 -b .cve3823
 %patch -P265 -p1 -b .cve3824
+%patch -P266 -p1 -b .cve2756
+%patch -P267 -p1 -b .cve3096
 
 # Fixes for tests
 %patch -P300 -p1 -b .datetests
@@ -1823,7 +1827,7 @@ cat << EOF
 
   WARNING : PHP 5.6 have reached its "End of Life" in
   January 2019. Even, if this package includes some of
-  the important security fixes, backported from 8.0, the
+  the important security fixes, backported from 8.1, the
   UPGRADE to a maintained version is very strongly RECOMMENDED.
 
 =====================================================================
@@ -2001,6 +2005,13 @@ EOF
 
 
 %changelog
+* Wed Apr 10 2024 Remi Collet <remi@remirepo.net> - 5.6.40-40
+- use oracle client library version 21.13
+- Fix __Host-/__Secure- cookie bypass due to partial CVE-2022-31629 fix
+  CVE-2024-2756
+- Fix password_verify can erroneously return true opening ATO risk
+  CVE-2024-3096
+
 * Wed Aug  2 2023 Remi Collet <remi@remirepo.net> - 5.6.40-39
 - Fix Security issue with external entity loading in XML without enabling it
   GHSA-3qrf-m4j2-pcrr CVE-2023-3823
